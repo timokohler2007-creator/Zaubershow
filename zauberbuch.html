@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dunkel">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1E0C12">
+<title>Zauberbuch – meine Effekte und Shows</title>
+<meta name="description" content="Persönliche Übersicht über Zaubereffekte: Karten, Münzen, Seile, Mentalmagie, Entfesselung und gekaufte Effekte – mit Notizen, Dauer, Status und Show-Ordnern.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E0C12'/%3E%3Cpath d='M9 23 L21 11' stroke='%23D9B45B' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M21 11 l2 -2' stroke='%23F3E9E4' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='23' cy='22' r='1.6' fill='%23D9B45B'/%3E%3Ccircle cx='10' cy='10' r='1.3' fill='%23D9B45B'/%3E%3C/svg%3E">
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('zauberbuch-design');
+    if (t !== 'hell' && t !== 'dunkel') {
+      t = (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) ? 'hell' : 'dunkel';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
+<style>
+/* ───────────── Farben und Maße ─────────────
+   Dieselbe Platine wie auf den Schwesterseiten, diesmal in Bühnenvorhang-Rot
+   mit Goldkontakten. Die Pads zeigen, wie weit du mit einem Effekt bist. */
+:root {
+  --bg: #1E0C12;
+  --flaeche: #2A141B;
+  --flaeche-2: #331A22;
+  --flaeche-hover: #2F1820;
+  --text: #F3E9E4;
+  --dim: #C3ACAA;
+  --gold: #D9B45B;
+  --gold-deko: #D9B45B;
+  --linie: #4A2731;
+  --fokus: #F0CF7A;
+  --gefahr: #F08A7E;
+  --rand: 40px;
+  --spur: 14px;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Source Serif Pro", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+[data-theme="hell"] {
+  --bg: #F4ECE6;
+  --flaeche: #FBF7F3;
+  --flaeche-2: #F1E7DF;
+  --flaeche-hover: #F8F1EB;
+  --text: #24101A;
+  --dim: #694D52;
+  --gold: #7A5C0C;
+  --gold-deko: #B08A25;
+  --linie: #DCCAC0;
+  --fokus: #7A5C0C;
+  --gefahr: #A3261B;
+  color-scheme: light;
+}
+@media (max-width: 560px) { :root { --rand: 30px; --spur: 10px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+[hidden] { display: none !important; }
+.nur-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 2px solid var(--fokus); outline-offset: 2px; }
+.huelle { max-width: 1260px; margin: 0 auto; padding: 0 20px; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* ───────────── Knöpfe und Felder ───────────── */
+.knopf {
+  appearance: none; border: 1px solid var(--gold); background: var(--gold); color: var(--bg);
+  font-weight: 600; font-size: .93rem; line-height: 1.2; padding: 9px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap;
+}
+.knopf:hover { filter: brightness(1.08); }
+.knopf.zweit { background: transparent; color: var(--gold); }
+.knopf.zweit:hover { background: color-mix(in srgb, var(--gold) 12%, transparent); filter: none; }
+.knopf.klein { font-size: .85rem; padding: 6px 10px; font-weight: 500; }
+.knopf.gefahr { border-color: var(--gefahr); color: var(--gefahr); background: transparent; }
+.knopf.gefahr.scharf { background: var(--gefahr); color: var(--bg); }
+.knopf:disabled { opacity: .45; cursor: default; filter: none; }
+.icon-knopf {
+  appearance: none; background: transparent; border: 1px solid transparent; color: var(--dim);
+  width: 30px; height: 30px; border-radius: 7px; cursor: pointer; display: inline-grid; place-items: center; flex: none;
+  font-size: 1rem; line-height: 1;
+}
+.icon-knopf:hover { color: var(--text); border-color: var(--linie); background: var(--flaeche-2); }
+.icon-knopf:disabled { opacity: .3; cursor: default; background: none; border-color: transparent; }
+.feld {
+  appearance: none; background: var(--flaeche); color: var(--text);
+  border: 1px solid var(--linie); border-radius: 8px; padding: 9px 12px; min-width: 0; width: 100%;
+}
+.feld::placeholder { color: var(--dim); opacity: 1; }
+select.feld { width: auto; padding-right: 30px; background-image: linear-gradient(45deg, transparent 50%, var(--dim) 50%), linear-gradient(135deg, var(--dim) 50%, transparent 50%); background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat; }
+textarea.feld { resize: vertical; min-height: 80px; line-height: 1.5; }
+label.fl { display: grid; gap: 5px; font-size: .86rem; color: var(--dim); }
+label.fl > span { font-weight: 600; letter-spacing: .02em; }
+
+/* ───────────── Kopf ───────────── */
+.kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding-top: 22px; padding-bottom: 18px; }
+.marke { margin: 0; font-family: var(--serif); font-weight: 600; font-size: clamp(1.7rem, 1.2rem + 2vw, 2.5rem); line-height: 1.05; letter-spacing: -.01em; }
+.marke small { display: block; font-family: var(--sans); font-size: .9rem; font-weight: 400; color: var(--dim); letter-spacing: 0; margin-top: 6px; }
+.kopf-rechts { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.zahlen { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; list-style: none; color: var(--dim); font-size: .9rem; width: 100%; }
+.zahlen b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.warnung { width: 100%; margin: 0; padding: 10px 14px; border: 1px solid var(--gefahr); border-radius: 8px; color: var(--text); font-size: .92rem; }
+
+/* Umschalter Effekte/Shows auf kleinen Bildschirmen */
+.tabs { display: none; gap: 6px; padding: 0 20px 12px; position: sticky; top: 0; z-index: 30; background: var(--bg); }
+.tabs button { flex: 1; appearance: none; border: 1px solid var(--linie); background: transparent; color: var(--dim); border-radius: 999px; padding: 9px 12px; font-weight: 600; cursor: pointer; }
+.tabs button[aria-pressed="true"] { color: var(--gold); border-color: var(--gold); background: color-mix(in srgb, var(--gold) 13%, transparent); }
+
+/* ───────────── Zwei Spalten ───────────── */
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 28px; align-items: start; padding-bottom: 60px; }
+@media (max-width: 980px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .tabs { display: flex; padding-top: 8px; }
+  body[data-ansicht="bib"] .shows { display: none; }
+  body[data-ansicht="shows"] .bib { display: none; }
+}
+
+/* ───────────── Bibliothek ───────────── */
+.leiste { position: sticky; top: 0; z-index: 20; background: var(--bg); padding: 4px 0 10px; border-bottom: 1px solid var(--linie); display: flex; gap: 8px; }
+@media (max-width: 980px) { .leiste { top: 52px; } }
+.leiste .feld { flex: 1; }
+.filter { padding: 12px 0 4px; }
+.chip-titel { margin: 0 0 6px; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.chip {
+  appearance: none; background: transparent; color: var(--dim); border: 1px solid var(--linie); border-radius: 999px;
+  font-size: .86rem; line-height: 1.1; padding: 7px 12px; min-height: 32px; cursor: pointer;
+}
+.chip:hover { color: var(--text); border-color: var(--dim); }
+.chip[aria-pressed="true"] { color: var(--gold); border-color: var(--gold); background: color-mix(in srgb, var(--gold) 13%, transparent); }
+.chip .n { margin-left: 6px; opacity: .75; font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) {
+  .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+  .chip { flex: none; }
+}
+.werkzeug { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 2px 0 12px; font-size: .88rem; color: var(--dim); }
+.werkzeug label { display: inline-flex; gap: 8px; align-items: center; }
+.werkzeug select.feld { padding-top: 6px; padding-bottom: 6px; font-size: .88rem; }
+.zaehler { margin-left: auto; font-variant-numeric: tabular-nums; }
+.legende { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+.legende span { display: inline-flex; align-items: center; gap: 6px; }
+.legende .pad { position: static; }
+
+/* Platine */
+.platine { position: relative; padding-left: var(--rand); }
+.platine::before { content: ""; position: absolute; left: calc(var(--spur) - 1px); top: 0; bottom: 0; width: 2px; background: var(--gold-deko); opacity: .55; }
+.liste { list-style: none; margin: 0; padding: 0; }
+.z { position: relative; margin: 2px 0; border-radius: 8px; scroll-margin-top: 140px; }
+.z:hover { background: var(--flaeche-hover); }
+.z.offen { background: var(--flaeche); }
+.z.ziel { outline: 2px solid var(--gold); outline-offset: 2px; }
+.z[draggable="true"] { cursor: grab; }
+.z.zieht-gerade { opacity: .45; }
+.z-zeile { display: flex; align-items: flex-start; gap: 6px; padding-right: 8px; }
+.z-kopf {
+  appearance: none; background: none; border: 0; text-align: left; cursor: pointer; flex: 1; min-width: 0;
+  display: block; padding: 13px 8px 13px 14px; border-radius: 8px;
+}
+.z-art { display: block; font-size: .7rem; line-height: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 3px; }
+.z-art .marker { color: var(--dim); }
+.z-name { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(1.08rem, 1rem + .3vw, 1.22rem); line-height: 1.3; }
+.z-kurz { display: block; margin-top: 3px; color: var(--dim); font-size: .92rem; line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.z.offen .z-kurz { display: none; }
+.z-rechts { display: flex; align-items: center; gap: 4px; padding-top: 12px; flex: none; }
+.dauer-tag { font-size: .82rem; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; padding: 0 4px; }
+.dauer-tag.eigen { color: var(--gold); }
+.notiz-tag { font-size: .8rem; color: var(--gold); }
+.z-pfeil { width: 9px; height: 9px; margin: 0 8px 0 6px; border-right: 2px solid var(--dim); border-bottom: 2px solid var(--dim); transform: translateY(-2px) rotate(45deg); transition: transform .2s ease; }
+.z.offen .z-pfeil { transform: translateY(2px) rotate(-135deg); border-color: var(--gold); }
+
+/* Pads = Status */
+.pad {
+  position: absolute; left: calc(var(--spur) - 7px - var(--rand)); top: 15px;
+  width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--gold-deko); background: var(--bg); pointer-events: none;
+}
+.pad::after { content: ""; position: absolute; left: 100%; top: 50%; height: 2px; margin-top: -1px; width: 0; background: var(--gold-deko); transition: width .2s ease; }
+.z.offen .pad::after { width: calc(var(--rand) - var(--spur) - 7px); }
+.pad.st-lernen { border-style: dashed; }
+.pad.st-ueben { background: linear-gradient(90deg, var(--gold-deko) 50%, var(--bg) 50%); }
+.pad.st-showreif { background: var(--gold-deko); box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--gold-deko); }
+
+/* Aufklappen */
+.z-detail { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .25s ease, visibility 0s linear .25s; }
+.z.offen .z-detail { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .25s ease, visibility 0s; }
+.z-detail-in { min-height: 0; overflow: hidden; padding: 0 14px; }
+.z-inhalt { border-top: 1px solid var(--linie); padding: 14px 0 16px; }
+.e-text { margin: 0 0 14px; max-width: 66ch; line-height: 1.6; }
+.z-dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0 0 16px; font-size: .93rem; }
+.z-dl dt { color: var(--dim); }
+.z-dl dt.hinweis { color: var(--gold); }
+.z-dl dd { margin: 0; max-width: 62ch; }
+.meins { border: 1px solid var(--linie); border-radius: 10px; padding: 14px; background: var(--flaeche-2); display: grid; gap: 12px; margin: 0 0 14px; }
+.meins-titel { margin: 0; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+.reihe { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; }
+.reihe .fl { flex: 0 1 auto; }
+.reihe .fl .feld { width: auto; }
+input.dauer-feld { width: 92px !important; }
+.in-shows { font-size: .88rem; color: var(--dim); margin: 0; }
+.in-shows button { appearance: none; background: none; border: 0; padding: 0; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: inherit; }
+.aktionen { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 560px) {
+  .z-dl { grid-template-columns: 1fr; gap: 0; }
+  .z-dl dd { margin-bottom: 8px; }
+  .z-kopf { padding: 12px 6px 12px 10px; }
+  .z-detail-in { padding: 0 10px; }
+  .pad { top: 13px; }
+}
+.leer { color: var(--dim); padding: 30px 0; }
+.leer p { margin: 0 0 12px; }
+
+/* ───────────── Shows (Ordner) ───────────── */
+.shows { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; padding: 2px 4px 20px 2px; scrollbar-width: thin; }
+@media (max-width: 980px) { .shows { position: static; max-height: none; overflow: visible; } }
+.shows-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 6px; }
+.shows-kopf h2 { margin: 0; font-family: var(--serif); font-size: 1.35rem; }
+.shows-tipp { margin: 0 0 14px; color: var(--dim); font-size: .86rem; }
+.show { border: 1px solid var(--linie); border-radius: 12px; background: var(--flaeche); margin: 0 0 10px; transition: border-color .15s ease, box-shadow .15s ease; }
+.show.aktiv { border-color: color-mix(in srgb, var(--gold-deko) 70%, var(--linie)); }
+.show.drop-ziel { border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 25%, transparent); }
+body.zieht .show { border-style: dashed; }
+.show-kopf { display: flex; align-items: center; gap: 6px; padding: 8px 8px 8px 6px; }
+.show-titel { appearance: none; background: none; border: 0; text-align: left; flex: 1; min-width: 0; cursor: pointer; padding: 4px 6px; border-radius: 8px; display: flex; gap: 10px; align-items: center; }
+.ordner { flex: none; width: 22px; height: 17px; border: 2px solid var(--gold-deko); border-radius: 3px 3px 4px 4px; position: relative; }
+.ordner::before { content: ""; position: absolute; left: -2px; top: -6px; width: 10px; height: 5px; border: 2px solid var(--gold-deko); border-bottom: 0; border-radius: 3px 3px 0 0; }
+.show.offen .ordner { background: color-mix(in srgb, var(--gold-deko) 35%, transparent); }
+.show-name { display: block; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.show-meta { display: block; font-size: .82rem; color: var(--dim); font-variant-numeric: tabular-nums; }
+.show-meta b { color: var(--gold); font-weight: 600; }
+.aktiv-tag { font-size: .68rem; letter-spacing: .07em; text-transform: uppercase; color: var(--gold); border: 1px solid currentColor; border-radius: 999px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; }
+.show-inhalt { padding: 0 12px 12px; display: grid; gap: 10px; }
+.programm { list-style: none; margin: 0; padding: 0; counter-reset: nr; }
+.p-item { display: flex; align-items: center; gap: 6px; padding: 6px 4px 6px 6px; border-radius: 8px; background: var(--flaeche-2); margin: 0 0 4px; position: relative; counter-increment: nr; }
+.p-item[draggable="true"] { cursor: grab; }
+.p-item::before { content: counter(nr) "."; color: var(--dim); font-size: .82rem; min-width: 1.6em; text-align: right; font-variant-numeric: tabular-nums; }
+.p-item.vor::after { content: ""; position: absolute; left: 0; right: 0; top: -3px; height: 2px; background: var(--gold); border-radius: 2px; }
+.p-name { flex: 1; min-width: 0; appearance: none; background: none; border: 0; text-align: left; padding: 2px; cursor: pointer; line-height: 1.3; font-size: .93rem; }
+.p-name:hover { color: var(--gold); }
+.p-dauer { font-size: .8rem; color: var(--dim); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.p-item .icon-knopf { width: 26px; height: 26px; font-size: .85rem; }
+.drop-hinweis { border: 1px dashed var(--linie); border-radius: 8px; padding: 12px; text-align: center; color: var(--dim); font-size: .86rem; }
+.show.drop-ziel .drop-hinweis, .programm.drop-ende + .drop-hinweis { border-color: var(--gold); color: var(--gold); }
+.show-aktionen { display: flex; flex-wrap: wrap; gap: 6px; }
+.show-felder { display: grid; gap: 8px; }
+
+/* ───────────── Dialoge ───────────── */
+dialog { border: 1px solid var(--linie); border-radius: 14px; background: var(--flaeche); color: var(--text); padding: 0; width: min(640px, calc(100vw - 24px)); max-height: calc(100vh - 32px); }
+dialog::backdrop { background: rgba(10, 4, 6, .6); }
+.dlg-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 18px 6px; }
+.dlg-kopf h2 { margin: 0; font-family: var(--serif); font-size: 1.35rem; }
+.dlg-inhalt { padding: 8px 18px 18px; display: grid; gap: 12px; }
+.dlg-fuss { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; padding: 0 18px 18px; }
+.zwei { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .zwei { grid-template-columns: 1fr; } }
+.check-reihe { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .92rem; }
+.check-reihe label { display: inline-flex; gap: 6px; align-items: center; color: var(--text); }
+.klein-text { font-size: .86rem; color: var(--dim); margin: 0; }
+
+/* Meldungen */
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none;
+  background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: .92rem; font-weight: 500; transition: opacity .2s ease, transform .2s ease; z-index: 100; max-width: calc(100vw - 32px); }
+.toast.an { opacity: 1; transform: translateX(-50%); }
+
+.fuss { border-top: 1px solid var(--linie); padding: 24px 0 50px; color: var(--dim); font-size: .88rem; }
+.fuss p { margin: 0 0 10px; max-width: 75ch; }
+
+/* Druck: nur die gewählte Setlist */
+#druck { display: none; }
+@media print {
+  body > *:not(#druck) { display: none !important; }
+  #druck { display: block; color: #000; font: 11pt/1.45 Georgia, serif; }
+  #druck h1 { font-size: 20pt; margin: 0 0 4pt; }
+  #druck .meta { margin: 0 0 14pt; color: #444; }
+  #druck ol { padding-left: 18pt; }
+  #druck li { margin: 0 0 10pt; break-inside: avoid; }
+  #druck .n { white-space: pre-wrap; color: #333; font-size: 10pt; margin-top: 2pt; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body data-ansicht="bib">
+
+<header class="kopf huelle">
+  <h1 class="marke">Zauberbuch<small>Alle deine Effekte – und deine Shows.</small></h1>
+  <div class="kopf-rechts">
+    <button type="button" class="knopf" id="neu-effekt">+ Neuer Effekt</button>
+    <button type="button" class="knopf zweit" id="backup-knopf">Backup</button>
+    <button type="button" class="knopf zweit" id="design-knopf">Helles Design</button>
+  </div>
+  <ul class="zahlen" id="zahlen" aria-live="polite"></ul>
+  <p class="warnung" id="speicher-warnung" hidden>Dein Browser erlaubt hier kein dauerhaftes Speichern. Änderungen gehen beim Schließen verloren – sichere sie über „Backup“.</p>
+</header>
+
+<nav class="tabs" aria-label="Ansicht">
+  <button type="button" id="tab-bib" aria-pressed="true">Effekte</button>
+  <button type="button" id="tab-shows" aria-pressed="false">Shows</button>
+</nav>
+
+<main class="app huelle">
+  <section class="bib" aria-label="Effekt-Bibliothek">
+    <div class="leiste" role="search">
+      <label class="nur-sr" for="suche">Effekte durchsuchen</label>
+      <input class="feld" id="suche" type="search" placeholder="Suchen" autocomplete="off" spellcheck="false" title="Tipp: Die Taste / springt zur Suche">
+    </div>
+    <div class="filter">
+      <p class="chip-titel" id="t-kat">Kategorie</p>
+      <div class="chips" id="chips-kat" role="group" aria-labelledby="t-kat"></div>
+      <p class="chip-titel" id="t-rahmen">Rahmen</p>
+      <div class="chips" id="chips-rahmen" role="group" aria-labelledby="t-rahmen"></div>
+      <p class="chip-titel" id="t-meins">Mein Stand</p>
+      <div class="chips" id="chips-meins" role="group" aria-labelledby="t-meins"></div>
+    </div>
+    <div class="werkzeug">
+      <label>Sortierung
+        <select class="feld" id="sortierung">
+          <option value="kat">Nach Kategorie</option>
+          <option value="name">Alphabetisch</option>
+          <option value="kurz">Kürzeste zuerst</option>
+          <option value="lang">Längste zuerst</option>
+          <option value="neu">Zuletzt bearbeitet</option>
+        </select>
+      </label>
+      <span class="legende" aria-label="Legende">
+        <span><i class="pad" aria-hidden="true"></i>offen</span>
+        <span><i class="pad st-lernen" aria-hidden="true"></i>will lernen</span>
+        <span><i class="pad st-ueben" aria-hidden="true"></i>am Üben</span>
+        <span><i class="pad st-showreif" aria-hidden="true"></i>showreif</span>
+      </span>
+      <span class="zaehler" id="zaehler"></span>
+    </div>
+    <div class="platine">
+      <ul class="liste" id="liste"></ul>
+    </div>
+    <div class="leer" id="leer" hidden>
+      <p>Kein Effekt passt dazu. Nimm einen Filter heraus – oder lege den Effekt selbst an.</p>
+      <button type="button" class="knopf zweit" id="zuruecksetzen">Filter zurücksetzen</button>
+    </div>
+  </section>
+
+  <aside class="shows" aria-label="Meine Shows">
+    <div class="shows-kopf">
+      <h2>Meine Shows</h2>
+      <button type="button" class="knopf klein" id="neu-show">+ Neue Show</button>
+    </div>
+    <p class="shows-tipp" id="shows-tipp">Zieh Effekte aus der Liste in einen Ordner. Oder klapp einen Effekt auf und wähle dort die Show. Mit „+“ in der Liste landet ein Effekt direkt in der markierten Show.</p>
+    <div id="showliste"></div>
+  </aside>
+</main>
+
+<footer class="fuss huelle">
+  <p>Die Beschreibungen zeigen nur, was das Publikum erlebt – Methoden stehen bewusst nicht drin. Herkunft und Jahreszahlen sind so gut wie möglich geprüft; bei vielen Klassikern gibt es unzählige Fassungen. Die Dauer ist ein Richtwert, deine eigene Zeit kannst du bei jedem Effekt eintragen.</p>
+  <p>Deine Notizen, eigenen Effekte und Shows werden in diesem Browser gespeichert. Mach ab und zu ein Backup – damit kannst du alles auch auf ein anderes Gerät übertragen.</p>
+</footer>
+
+<!-- Dialog: Effekt anlegen / bearbeiten -->
+<dialog id="dlg-effekt" aria-labelledby="dlg-effekt-titel">
+  <form method="dialog" id="form-effekt">
+    <div class="dlg-kopf">
+      <h2 id="dlg-effekt-titel">Neuer Effekt</h2>
+      <button type="button" class="icon-knopf" data-schliessen aria-label="Schließen">✕</button>
+    </div>
+    <div class="dlg-inhalt">
+      <label class="fl"><span>Name *</span><input class="feld" name="name" required maxlength="120" autocomplete="off"></label>
+      <div class="zwei">
+        <label class="fl"><span>Kategorie</span><select class="feld" name="kat" id="f-kat" style="width:100%"></select></label>
+        <label class="fl"><span>Richtdauer (Minuten)</span><input class="feld" name="dauer" type="number" min="0" max="240" step="0.5" inputmode="decimal"></label>
+      </div>
+      <div class="fl"><span style="font-weight:600">Rahmen</span>
+        <div class="check-reihe" id="f-rahmen"></div>
+      </div>
+      <label class="fl"><span>Was passiert (aus Sicht des Publikums)</span><textarea class="feld" name="text" rows="4"></textarea></label>
+      <div class="zwei">
+        <label class="fl"><span>Herkunft / Hersteller</span><input class="feld" name="herkunft" maxlength="200" autocomplete="off"></label>
+        <label class="fl"><span>Requisiten</span><input class="feld" name="req" maxlength="200" autocomplete="off"></label>
+      </div>
+      <div class="check-reihe"><label><input type="checkbox" name="kauf"> Gekaufter Effekt</label></div>
+    </div>
+    <div class="dlg-fuss">
+      <button type="button" class="knopf gefahr" id="f-loeschen" hidden>Effekt löschen</button>
+      <span style="flex:1"></span>
+      <button type="button" class="knopf zweit" data-schliessen>Abbrechen</button>
+      <button type="submit" class="knopf" id="f-speichern">Speichern</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Dialog: Backup -->
+<dialog id="dlg-backup" aria-labelledby="dlg-backup-titel">
+  <div class="dlg-kopf">
+    <h2 id="dlg-backup-titel">Backup</h2>
+    <button type="button" class="icon-knopf" data-schliessen aria-label="Schließen">✕</button>
+  </div>
+  <div class="dlg-inhalt">
+    <p class="klein-text">Ein Backup enthält deine Notizen, Zeiten, deinen Stand, eigene Effekte und alle Shows. So kannst du alles sichern oder auf ein anderes Gerät übertragen.</p>
+    <div class="aktionen">
+      <button type="button" class="knopf" id="bk-datei">Als Datei speichern</button>
+      <button type="button" class="knopf zweit" id="bk-kopieren">In die Zwischenablage kopieren</button>
+    </div>
+    <hr style="border:0;border-top:1px solid var(--linie);margin:6px 0">
+    <p class="klein-text"><b style="color:var(--text)">Backup laden:</b> Datei wählen oder den kopierten Text einfügen. Achtung: Das ersetzt deine aktuellen Daten.</p>
+    <input type="file" id="bk-file" accept=".json,application/json,text/plain" class="feld">
+    <textarea class="feld" id="bk-text" rows="4" placeholder="Backup-Text hier einfügen"></textarea>
+    <div class="aktionen">
+      <button type="button" class="knopf gefahr" id="bk-laden">Backup laden und ersetzen</button>
+    </div>
+    <p class="klein-text" id="bk-meldung" role="status"></p>
+  </div>
+</dialog>
+
+<div id="druck" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script id="daten">
+/* ════════════════════════════════════════════════════════════════
+   EFFEKTE IM QUELLTEXT ERGÄNZEN (optional)
+   ────────────────────────────────────────────────────────────────
+   Am einfachsten fügst du neue Effekte direkt auf der Seite hinzu
+   (Knopf „+ Neuer Effekt“). Willst du die Grundliste selbst ändern:
+   einen Block kopieren, Werte anpassen, speichern.
+
+   { id:"kurzname", name:"Name", kat:"karten", rahmen:["nah"], dauer:3,
+     text:"Was das Publikum erlebt.", herkunft:"Wer, wann",
+     req:"Was man sichtbar braucht", kauf:false },
+
+   kat     einer der Schlüssel aus KATEGORIEN
+   rahmen  "nah" (Close-up am Tisch), "salon" (stehend, kleines Publikum), "buehne"
+   dauer   Richtwert in Minuten für eine normale Vorführung
+   kauf    true, wenn es ein gekaufter Effekt (Produkt) ist
+   Optional: auch:"andere Namen", hinweis:"Wichtiges, z. B. Sicherheit"
+
+   Die id nie mehr ändern: Notizen, Status und Shows hängen daran.
+   ════════════════════════════════════════════════════════════════ */
+
+const KATEGORIEN = {
+  karten:   "Karten",
+  muenzen:  "Münzen & Geld",
+  seile:    "Seile & Tücher",
+  klassik:  "Becher, Bälle & Ringe",
+  mental:   "Mentalmagie",
+  alltag:   "Alltagsgegenstände",
+  feuer:    "Feuer & Erscheinungen",
+  buehne:   "Bühnenillusionen",
+  entfesselung: "Entfesselung",
+  kinder:   "Kinder & Comedy",
+  sonstiges: "Sonstiges"
+};
+
+const RAHMEN = { nah: "Close-up", salon: "Salon", buehne: "Bühne" };
+
+const EFFEKTE = [
+  // ───────────── Karten ─────────────
+  { id:"ambitious", name:"Ambitious Card", kat:"karten", rahmen:["nah","salon"], dauer:4,
+    text:"Eine unterschriebene Zuschauerkarte wird mitten ins Spiel gesteckt – und liegt sofort wieder oben. Das wiederholt sich unter immer strengeren Bedingungen. Beliebte Finale: Die Karte steckt allein im Kartenetui, im Mund des Magiers oder klebt an der Decke.",
+    herkunft:"Alter Klassiker; prägend war Dai Vernons Fassung in „Stars of Magic“", req:"Kartenspiel, Filzstift", auch:"Ambitious Card Routine (ACR), Aufsteigende Karte im Spiel" },
+  { id:"ootw", name:"Out of This World", kat:"karten", rahmen:["nah","salon"], dauer:5,
+    text:"Ein Zuschauer sortiert verdeckte Karten nur nach Gefühl auf zwei Stapel: ‚rot‘ oder ‚schwarz‘. Er sieht dabei keine einzige Kartenseite. Am Ende stellt sich heraus, dass er fast das ganze Spiel fehlerfrei nach Farben getrennt hat.",
+    herkunft:"Paul Curry, 1942", req:"Kartenspiel", auch:"OOTW" },
+  { id:"triumph", name:"Triumph", kat:"karten", rahmen:["nah","salon"], dauer:3,
+    text:"Eine gewählte Karte verschwindet im Spiel. Dann wird das Spiel wild durcheinander gemischt, die Hälfte mit dem Bild nach oben, die andere nach unten. Ein Fingerschnippen – und alle Karten liegen wieder richtig herum. Nur eine nicht: die Karte des Zuschauers.",
+    herkunft:"Dai Vernon, 1946 („Stars of Magic“)", req:"Kartenspiel" },
+  { id:"c3", name:"C3 (Con Cam Coincidencia)", kat:"karten", rahmen:["nah"], dauer:4, kauf:true,
+    text:"Drei Zuschauer mischen, wählen und verteilen die Karten scheinbar völlig frei – der Magier fasst das Spiel kaum an. Am Ende passen ihre Entscheidungen auf eine unmögliche Weise zusammen. Eine Koinzidenz-Routine, die erst am Tisch mit drei Leuten richtig wirkt.",
+    herkunft:"R. Paul Wilson", req:"Kartenspiel, drei Zuschauer", auch:"C3; Variante für einen Zuschauer: C3 Poker",
+    hinweis:"Es gibt auch ein ganz anderes Produkt namens „C3“ von Nobuyuki Nojima (sichtbare Farbwechsel). Falls du dieses meinst, Beschreibung einfach in den Notizen anpassen." },
+  { id:"twisting", name:"Twisting the Aces", kat:"karten", rahmen:["nah"], dauer:3,
+    text:"Die vier Asse liegen als kleines Päckchen in der Hand. Bei jeder kleinen Drehung des Päckchens dreht sich ein weiteres Ass mit dem Bild nach oben – bis alle vier offen liegen.",
+    herkunft:"Dai Vernon", req:"Vier Asse" },
+  { id:"oelwasser", name:"Öl und Wasser", kat:"karten", rahmen:["nah"], dauer:3,
+    text:"Rote und schwarze Karten werden abwechselnd ineinander gesteckt. Wie Öl und Wasser trennen sie sich trotzdem jedes Mal wieder: alle Roten auf einer Seite, alle Schwarzen auf der anderen.",
+    herkunft:"Klassisches Kartenplot", req:"Je drei bis vier rote und schwarze Karten", auch:"Oil and Water" },
+  { id:"collectors", name:"The Collectors", kat:"karten", rahmen:["nah"], dauer:4,
+    text:"Drei Zuschauer wählen Karten, die im Spiel verloren gehen. Die vier Könige (oder Asse) werden als ‚Sammler‘ ausgelegt. Plötzlich liegen die drei gewählten Karten zwischen ihnen – eingesammelt.",
+    herkunft:"Roy Walton", req:"Kartenspiel" },
+  { id:"cardwarp", name:"Card Warp", kat:"karten", rahmen:["nah"], dauer:2,
+    text:"Zwei Karten werden gefaltet, die eine längs, die andere quer, und ineinander geschoben. Die innere Karte wird hin und her geschoben – und ihre Mitte dreht sich dabei unmöglich um, obwohl sie in der anderen steckt.",
+    herkunft:"Roy Walton (sein bekanntester Effekt)", req:"Zwei Karten" },
+  { id:"invisible", name:"Invisible Deck", kat:"karten", rahmen:["nah","salon","buehne"], dauer:3, kauf:true,
+    text:"Der Magier reicht dem Zuschauer ein ‚unsichtbares‘ Kartenspiel. Der Zuschauer zieht in Gedanken eine beliebige Karte, dreht sie um und steckt sie zurück. Dann holt der Magier ein echtes Spiel hervor: Genau die genannte Karte liegt darin verkehrt herum.",
+    herkunft:"Joe Berg, 1936 (als „Ultra Mental Deck“); die bekannte Präsentation geht auf J. B. Bobo zurück", req:"Spezielles Kartenspiel", auch:"Unsichtbares Kartenspiel, Ultra Mental Deck" },
+  { id:"chicago", name:"Chicago Opener", kat:"karten", rahmen:["nah"], dauer:3,
+    text:"Eine Zuschauerkarte wird gewählt. Plötzlich erscheint im blauen Spiel eine Karte mit rotem Rücken – zuerst ist es eine andere Karte, am Ende aber genau die des Zuschauers.",
+    herkunft:"Meist Frank Everhart zugeschrieben", req:"Kartenspiel", auch:"Red Hot Mama" },
+  { id:"sandwich", name:"Sandwich-Effekt", kat:"karten", rahmen:["nah"], dauer:2,
+    text:"Zwei Joker (oder Buben) liegen offen auf dem Tisch. Die gewählte Karte geht im Spiel verloren – und erscheint plötzlich verdeckt zwischen den beiden Jokern.",
+    herkunft:"Klassisches Kartenplot", req:"Kartenspiel" },
+  { id:"wallet", name:"Karte ins Portemonnaie", kat:"karten", rahmen:["nah","salon"], dauer:3,
+    text:"Eine unterschriebene Karte verschwindet aus dem Spiel und wird im verschlossenen Portemonnaie des Magiers wiedergefunden – oft hinter Reißverschluss oder in einem Briefumschlag.",
+    herkunft:"Klassiker, viele kommerzielle Portemonnaies", req:"Spezielles Portemonnaie, Kartenspiel, Stift", auch:"Card to Wallet" },
+  { id:"kartemund", name:"Karte in den Mund", kat:"karten", rahmen:["nah","salon"], dauer:1,
+    text:"Die Zuschauerkarte ist aus dem Spiel verschwunden. Der Magier öffnet den Mund – darin steckt die zusammengefaltete, unterschriebene Karte.",
+    herkunft:"Klassisches Finale", req:"Kartenspiel, Stift", auch:"Card to Mouth" },
+  { id:"aufsteigend", name:"Die aufsteigende Karte", kat:"karten", rahmen:["salon","buehne"], dauer:2,
+    text:"Mehrere Zuschauer wählen Karten. Der Magier hält das Spiel hoch – und auf Kommando steigen die gewählten Karten nacheinander langsam von selbst aus dem Spiel empor.",
+    herkunft:"Klassiker des 19. Jahrhunderts, damals oft mit mechanischen Apparaten", req:"Kartenspiel", auch:"Rising Card" },
+  { id:"zerrissen", name:"Zerrissene und wiederhergestellte Karte", kat:"karten", rahmen:["nah"], dauer:3,
+    text:"Eine Karte wird in vier Stücke zerrissen. Der Zuschauer legt den Finger darauf – und die Teile setzen sich vor seinen Augen wieder zu einer ganzen Karte zusammen, manchmal bis auf ein letztes Stück, das er behalten darf.",
+    herkunft:"Klassisches Plot, viele Fassungen", req:"Karten", auch:"Torn and Restored" },
+  { id:"decke", name:"Karte an der Decke", kat:"karten", rahmen:["salon"], dauer:1,
+    text:"Das Spiel wird an die Decke geworfen. Die Karten regnen herab – nur eine bleibt oben kleben: die unterschriebene Zuschauerkarte.",
+    herkunft:"Klassisches Finale", req:"Kartenspiel, Stift" },
+  { id:"cuttingaces", name:"Cutting the Aces", kat:"karten", rahmen:["nah"], dauer:2,
+    text:"Das Spiel wird gemischt. Viermal wird abgehoben – und jedes Mal liegt ein Ass an der Schnittstelle.",
+    herkunft:"Dai Vernon, 1946 („Stars of Magic“)", req:"Kartenspiel", auch:"Asse abheben" },
+  { id:"slowaces", name:"Vier-Asse-Sammlung", kat:"karten", rahmen:["nah"], dauer:4,
+    text:"Die vier Asse liegen auf vier Stapeln mit je drei weiteren Karten. Eins nach dem anderen verschwinden die Asse aus ihren Stapeln und versammeln sich beim ‚Anführer‘-Ass.",
+    herkunft:"Altes Plot; bekannte Fassung: Dai Vernons „Slow Motion Four Aces“ (1950)", req:"Kartenspiel", auch:"Ace Assembly" },
+  { id:"travelers", name:"The Travelers", kat:"karten", rahmen:["nah","salon"], dauer:3,
+    text:"Die vier Asse werden ins Spiel gemischt. Eins nach dem anderen verschwinden sie und tauchen in verschiedenen Taschen des Magiers wieder auf.",
+    herkunft:"Dai Vernon, 1950 („Stars of Magic“)", req:"Kartenspiel" },
+  { id:"doasido", name:"Do as I Do", kat:"karten", rahmen:["nah"], dauer:4,
+    text:"Magier und Zuschauer haben je ein eigenes Kartenspiel und machen dasselbe: mischen, eine Karte merken, tauschen. Am Ende haben beide unabhängig voneinander genau dieselbe Karte gewählt.",
+    herkunft:"Klassisches Plot", req:"Zwei Kartenspiele", auch:"Zwei-Spiele-Koinzidenz" },
+  { id:"farbwechselspiel", name:"Farbwechselndes Kartenspiel", kat:"karten", rahmen:["nah","salon"], dauer:1,
+    text:"Nach einem Trick mit einem blauen Spiel breitet der Magier es noch einmal aus – alle Rücken sind plötzlich rot, bis auf die gewählte Karte.",
+    herkunft:"Klassisches Finale", req:"Kartenspiele", auch:"Color Changing Deck" },
+  { id:"monte", name:"Three Card Monte", kat:"karten", rahmen:["nah","salon"], dauer:3,
+    text:"Drei Karten, eine davon eine Dame. Der Magier zeigt das alte Gaunerspiel: ‚Finde die Dame‘. So genau der Zuschauer auch hinschaut – er tippt immer falsch, und am Ende ist die Dame oft ganz verschwunden.",
+    herkunft:"Altes Straßenspiel, viele Zauber-Fassungen", req:"Drei Karten", auch:"Kümmelblättchen, Hütchenspiel mit Karten" },
+  { id:"poker", name:"Poker-Demonstration", kat:"karten", rahmen:["nah"], dauer:4,
+    text:"Der Magier gibt eine Runde Poker – nach scheinbar fairem Mischen. Die Zuschauer bekommen gute Blätter, aber der Magier hat am Ende einen Royal Flush.",
+    herkunft:"Klassische Falschspieler-Vorführung", req:"Kartenspiel", auch:"Gambling Demonstration" },
+  { id:"biddle", name:"Biddle-Trick", kat:"karten", rahmen:["nah"], dauer:3,
+    text:"Aus einem kleinen Päckchen von fünf Karten verschwindet die gewählte Karte vor den Augen des Zuschauers – und wird an einer ganz anderen Stelle wiedergefunden.",
+    herkunft:"Elmer Biddle", req:"Kartenspiel" },
+  { id:"sharpie", name:"Stift durch Karte", kat:"karten", rahmen:["nah"], dauer:2, kauf:true,
+    text:"Ein Filzstift wird quer durch eine unterschriebene Karte gestoßen und steckt sichtbar darin. Dann wird der Stift herausgezogen – und die Karte ist völlig unversehrt.",
+    herkunft:"Kommerzieller Effekt, mehrere Hersteller", req:"Spezielles Zubehör, Karten", auch:"Sharpie Through Card" },
+  { id:"inferno", name:"Inferno", kat:"karten", rahmen:["nah"], dauer:3, kauf:true,
+    text:"Der Zuschauer ‚verbrennt‘ in Gedanken ein ganzes Kartenspiel und rettet nur eine einzige, frei genannte Karte. Dann öffnet er eine kleine Streichholzschachtel, die die ganze Zeit sichtbar war – darin liegt genau diese Karte.",
+    herkunft:"Joshua Jay", req:"Streichholzschachtel (Set)", auch:"Inferno von Joshua Jay",
+    hinweis:"Unter dem Namen „Inferno“ gibt es auch eine ältere Feuerkarte (Hottrix), die in Flammen aufgeht und die gewählte Karte zeigt. Falls du die meinst, Beschreibung in den Notizen anpassen." },
+
+  // ───────────── Münzen & Geld ─────────────
+  { id:"coinsacross", name:"Coins Across", kat:"muenzen", rahmen:["nah"], dauer:4,
+    text:"Drei oder vier Münzen liegen in der einen Hand. Eine nach der anderen wandert unsichtbar hinüber in die andere, geschlossene Hand – man hört sie sogar ankommen.",
+    herkunft:"Klassisches Münzplot", req:"3–4 Münzen", auch:"Münzwanderung" },
+  { id:"matrix", name:"Matrix", kat:"muenzen", rahmen:["nah"], dauer:3,
+    text:"Vier Münzen liegen in den Ecken eines Quadrats, jede unter einer Spielkarte. Eine nach der anderen springt unsichtbar unter eine einzige Karte, bis alle vier dort versammelt sind.",
+    herkunft:"Al Schneider; entwickelt 1960, veröffentlicht 1970 in Genii", req:"4 Münzen, 4 Karten, Close-up-Matte" },
+  { id:"durchtisch", name:"Münzen durch den Tisch", kat:"muenzen", rahmen:["nah"], dauer:3,
+    text:"Der Magier drückt Münzen auf die Tischplatte – sie fallen hörbar durch das massive Holz und landen in der Hand darunter.",
+    herkunft:"Klassisches Münzplot", req:"Münzen, Tisch", auch:"Coins Through the Table" },
+  { id:"spellbound", name:"Spellbound", kat:"muenzen", rahmen:["nah"], dauer:2,
+    text:"Eine Silbermünze verwandelt sich in eine Kupfermünze – und wieder zurück. Immer wieder, langsam und sichtbar, mitten in den Fingern.",
+    herkunft:"Dai Vernon, 1946 („Stars of Magic“)", req:"Eine Silber- und eine Kupfermünze" },
+  { id:"kupfersilber", name:"Kupfer/Silber-Wechsel", kat:"muenzen", rahmen:["nah"], dauer:3,
+    text:"Eine Kupfermünze liegt in der Hand des Zuschauers, eine Silbermünze in der des Magiers. Ein Moment – und die Münzen haben den Platz getauscht, obwohl die Hand des Zuschauers die ganze Zeit fest geschlossen war.",
+    herkunft:"Klassisches Plot, viele kommerzielle Sets", req:"Münzen", auch:"Copper Silver Transposition" },
+  { id:"muenzvanish", name:"Verschwindende Münze", kat:"muenzen", rahmen:["nah"], dauer:1,
+    text:"Eine Münze wird in die Hand gelegt, die Hand öffnet sich – leer. Kurz darauf erscheint die Münze hinter dem Ohr eines Zuschauers oder an einem ganz anderen Ort.",
+    herkunft:"Grundlage der Münzmagie", req:"Eine Münze", auch:"Coin Vanish" },
+  { id:"biss", name:"Abgebissene Münze", kat:"muenzen", rahmen:["nah"], dauer:1, kauf:true,
+    text:"Der Magier beißt ein Stück aus einer Münze und zeigt das Loch. Dann ‚spuckt‘ er das Stück zurück auf die Münze – sie ist wieder ganz.",
+    herkunft:"Kommerzieller Klassiker", req:"Spezielle Münze", auch:"Bite Coin" },
+  { id:"flasche", name:"Münze in der Flasche", kat:"muenzen", rahmen:["nah"], dauer:2, kauf:true,
+    text:"Eine unterschriebene Münze wird gegen eine verschlossene Glasflasche geschlagen – und liegt plötzlich darin. Zum Schluss rasselt sie im Flaschenbauch, unmöglich herauszubekommen.",
+    herkunft:"Kommerzieller Klassiker", req:"Flasche, Münze (Set)", auch:"Coin in Bottle" },
+  { id:"misers", name:"Miser's Dream", kat:"muenzen", rahmen:["salon","buehne"], dauer:4,
+    text:"Der Magier greift in die Luft und holt eine Münze nach der anderen hervor: hinter Ohren, aus Haaren, aus der Nase von Zuschauern. Jede klimpert in einen Eimer, bis dieser voll ist.",
+    herkunft:"Berühmt durch T. Nelson Downs, „King of Koins“, um 1900", req:"Eimer oder Hut, Münzen", auch:"Traum des Geizhalses" },
+  { id:"chinkachink", name:"Chink-a-Chink", kat:"muenzen", rahmen:["nah"], dauer:3,
+    text:"Vier kleine Gegenstände – Zuckerwürfel, Korken oder Münzen – liegen im Quadrat. Unter den Händen des Magiers springen sie unsichtbar zusammen, bis alle an einer Ecke liegen.",
+    herkunft:"Klassiker; Vorläufer von Matrix", req:"4 kleine Gegenstände" },
+  { id:"threefly", name:"Three Fly", kat:"muenzen", rahmen:["nah"], dauer:2,
+    text:"Drei Münzen springen eine nach der anderen sichtbar von der einen Hand in die andere – ohne dass die Hände sich je nahekommen. Sehr schnell und sehr visuell.",
+    herkunft:"Moderner Klassiker der Münzmagie", req:"3 Münzen" },
+  { id:"scheinwechsel", name:"Geldschein-Verwandlung", kat:"muenzen", rahmen:["nah","salon"], dauer:1,
+    text:"Ein Zehner wird gefaltet und wieder aufgefaltet – jetzt ist es ein Hunderter. Oder ein leeres Stück Papier wird zu echtem Geld.",
+    herkunft:"Klassisches Plot, viele Fassungen", req:"Geldscheine", auch:"Bill Change" },
+  { id:"zitrone", name:"Geldschein in der Zitrone", kat:"muenzen", rahmen:["nah","salon"], dauer:5,
+    text:"Ein geliehener Geldschein wird unterschrieben und verschwindet. Eine Zitrone, die die ganze Zeit sichtbar war, wird aufgeschnitten – darin steckt der zusammengerollte, unterschriebene Schein.",
+    herkunft:"Klassiker", req:"Zitrone, Messer, Geldschein, Stift", auch:"Bill in Lemon" },
+  { id:"jumbo", name:"Riesenmünze", kat:"muenzen", rahmen:["nah","salon"], dauer:1,
+    text:"Als Schluss einer Münzroutine öffnet der Magier die Hand – darin liegt plötzlich eine riesige Münze, viel größer als die Hand eigentlich verbergen könnte.",
+    herkunft:"Klassisches Finale", req:"Jumbo-Münze", auch:"Jumbo Coin" },
+
+  // ───────────── Seile & Tücher ─────────────
+  { id:"professor", name:"Professor's Nightmare", kat:"seile", rahmen:["nah","salon","buehne"], dauer:3,
+    text:"Drei Seile, eins kurz, eins mittel, eins lang. Der Magier legt die Enden zusammen und zieht – alle drei sind plötzlich gleich lang. Dann werden sie wieder ungleich, und die Zuschauer dürfen alles untersuchen.",
+    herkunft:"Bob Carver, Mitte der 1950er-Jahre, nach Ideen von Hen Fetsch; den Namen gab ihm Gene Gordon", req:"Drei Seile", auch:"Drei ungleiche Seile" },
+  { id:"seilschnitt", name:"Zerschnittenes Seil", kat:"seile", rahmen:["salon","buehne"], dauer:3,
+    text:"Ein langes Seil wird in der Mitte durchgeschnitten, der Zuschauer sieht die zwei Enden. Der Magier verknotet sie, wickelt das Seil – und es ist wieder ganz, ohne Knoten.",
+    herkunft:"Einer der ältesten Seiltricks", req:"Seil, Schere", auch:"Cut and Restored Rope" },
+  { id:"ringseil", name:"Ring aufs Seil", kat:"seile", rahmen:["nah","salon"], dauer:2,
+    text:"Ein Zuschauer hält beide Enden eines Seils fest. Ein geliehener Fingerring wird gegen das Seil geworfen – und hängt plötzlich daran, aufgefädelt.",
+    herkunft:"Klassisches Plot", req:"Seil oder Schnur, Ring", auch:"Ring on Rope" },
+  { id:"seilhals", name:"Seil durch den Hals", kat:"seile", rahmen:["salon","buehne"], dauer:1,
+    text:"Ein Seil wird um den Hals gelegt und verknotet. Mit einem Ruck zieht der Magier es nach vorne – es geht scheinbar mitten durch den Hals hindurch.",
+    herkunft:"Klassiker", req:"Seil", auch:"Rope Through Neck" },
+  { id:"gleitknoten", name:"Wandernder Knoten", kat:"seile", rahmen:["nah","salon"], dauer:1,
+    text:"Ein Knoten sitzt mitten im Seil. Der Magier streicht mit der Hand darüber, und der Knoten gleitet am Seil entlang – oder verschwindet ganz.",
+    herkunft:"Paul Curry („Sliding Knot“)", req:"Seil", auch:"Sliding Knot" },
+  { id:"knotenwurf", name:"Knoten aus dem Nichts", kat:"seile", rahmen:["salon","buehne"], dauer:1,
+    text:"Der Magier schüttelt ein glattes Seil kurz durch die Luft – und plötzlich ist ein Knoten darin. Beim nächsten Schütteln ein zweiter.",
+    herkunft:"Klassiker", req:"Seil" },
+  { id:"tuchglas", name:"Tuch durchs Glas", kat:"seile", rahmen:["salon","buehne"], dauer:2,
+    text:"Ein Seidentuch liegt in einem Glas, das mit einem Tuch oder Papier abgedeckt und zugebunden ist. Der Magier zieht das Tuch von unten durch den Glasboden heraus.",
+    herkunft:"Klassiker", req:"Glas, Seidentücher", auch:"Silk Through Glass" },
+  { id:"tuchfarbe", name:"Farbwechselnde Tücher", kat:"seile", rahmen:["salon","buehne"], dauer:2,
+    text:"Ein weißes Seidentuch wird durch die geschlossene Faust gezogen und kommt rot heraus. Dann grün, dann blau – jedes Mal eine neue Farbe.",
+    herkunft:"Klassiker", req:"Seidentücher", auch:"Color Changing Silks" },
+  { id:"tuecherknoten", name:"Die verknoteten Tücher", kat:"seile", rahmen:["salon","buehne"], dauer:3,
+    text:"Zwei Tücher werden zusammengeknotet und einem Zuschauer gegeben, ein drittes Tuch verschwindet. Als die beiden Tücher ausgeschüttelt werden, hängt das verschwundene plötzlich verknotet zwischen ihnen.",
+    herkunft:"Klassiker", req:"Drei Seidentücher", auch:"20th Century Silks" },
+
+  // ───────────── Becher, Bälle & Ringe ─────────────
+  { id:"becher", name:"Becherspiel", kat:"klassik", rahmen:["nah","salon"], dauer:5,
+    text:"Drei Becher, drei kleine Bälle. Die Bälle springen von Becher zu Becher, verschwinden, vermehren sich und dringen durch die Becherböden. Zum Schluss liegen unter den Bechern plötzlich große Früchte oder Bälle.",
+    herkunft:"Einer der ältesten Zaubertricks überhaupt, seit der Antike überliefert", req:"Drei Becher, Bälle, Schlussladungen", auch:"Cups and Balls" },
+  { id:"chopcup", name:"Chop Cup", kat:"klassik", rahmen:["nah","salon"], dauer:4,
+    text:"Ein einzelner Becher und ein Ball. Der Ball erscheint und verschwindet unter dem Becher, immer genau dann, wenn das Publikum es nicht erwartet. Als Finale liegt etwas ganz anderes unter dem Becher.",
+    herkunft:"Meist Al Wheatley („Chop Chop“) zugeschrieben", req:"Becher, Bälle, Schlussladung" },
+  { id:"ringe", name:"Chinesische Ringe", kat:"klassik", rahmen:["salon","buehne"], dauer:5,
+    text:"Massive Metallringe werden gezeigt und geprüft. Durch bloßes Aneinanderschlagen verketten sie sich ineinander, bilden Ketten und Figuren – und lösen sich wieder.",
+    herkunft:"Alter Bühnenklassiker, im 19. Jahrhundert in Europa populär", req:"Ringe-Set", auch:"Linking Rings, Ringspiel" },
+  { id:"schwamm", name:"Schwammbälle", kat:"klassik", rahmen:["nah","salon"], dauer:4,
+    text:"Ein roter Schaumstoffball liegt in der geschlossenen Hand des Zuschauers. Als er die Hand öffnet, sind es zwei, dann drei – oder sie verwandeln sich in etwas ganz anderes.",
+    herkunft:"Berühmt durch Albert Goshman", req:"Schwammbälle", auch:"Sponge Balls" },
+  { id:"zombie", name:"Zombie-Ball", kat:"klassik", rahmen:["salon","buehne"], dauer:4,
+    text:"Eine silberne Kugel liegt unter einem Tuch. Sie beginnt zu schweben, wandert über die Tuchkante, versteckt sich dahinter und gleitet durch die Luft, während der Magier das Tuch nur an den Ecken hält.",
+    herkunft:"Joe Karson, 1938", req:"Zombie-Set", auch:"Schwebende Kugel" },
+  { id:"billard", name:"Vermehrende Billardbälle", kat:"klassik", rahmen:["salon","buehne"], dauer:4,
+    text:"Zwischen den Fingern des Magiers erscheint ein Ball, dann ein zweiter, ein dritter, ein vierter. Sie wechseln die Farbe, verschwinden einzeln und tauchen wieder auf – reine Manipulation.",
+    herkunft:"Klassische Bühnenmanipulation", req:"Ball-Set", auch:"Multiplying Balls" },
+
+  // ───────────── Mentalmagie ─────────────
+  { id:"buchtest", name:"Buchtest", kat:"mental", rahmen:["nah","salon","buehne"], dauer:4,
+    text:"Ein Zuschauer schlägt ein Buch an einer frei gewählten Stelle auf und merkt sich ein Wort. Der Magier liest seine Gedanken – zuerst Buchstaben, dann das ganze Wort.",
+    herkunft:"Klassiker der Mentalmagie", req:"Buch", auch:"Book Test" },
+  { id:"vorhersage", name:"Vorhersage im Umschlag", kat:"mental", rahmen:["nah","salon","buehne"], dauer:3,
+    text:"Vor Beginn übergibt der Magier einen verschlossenen Umschlag. Ein Zuschauer trifft frei eine Wahl – Zahl, Wort oder Karte. Der Umschlag wird geöffnet: Die Vorhersage stimmt genau.",
+    herkunft:"Klassiker der Mentalmagie", req:"Umschlag", auch:"Prediction" },
+  { id:"zettel", name:"Gedankenlesen mit Zetteln", kat:"mental", rahmen:["nah","salon"], dauer:4,
+    text:"Zuschauer schreiben geheim einen Namen, eine Zahl oder ein Erlebnis auf einen Zettel, falten ihn und behalten ihn. Der Magier erfährt den Inhalt, ohne ihn je gelesen zu haben.",
+    herkunft:"Klassiker der Mentalmagie", req:"Zettel, Stifte", auch:"Billet Reading" },
+  { id:"loeffel", name:"Löffelbiegen", kat:"mental", rahmen:["nah","salon"], dauer:2,
+    text:"Ein geliehener Löffel wird leicht gerieben – und beginnt sich vor den Augen des Publikums zu biegen, als würde er weich. Am Ende ist er verbogen oder bricht sogar.",
+    herkunft:"Berühmt durch Uri Geller in den 1970er-Jahren", req:"Löffel", auch:"Spoon Bending" },
+  { id:"gedachtekarte", name:"Gedachte Karte", kat:"mental", rahmen:["nah","salon"], dauer:2,
+    text:"Der Zuschauer denkt nur an eine Karte – er berührt nichts und sagt nichts. Der Magier nennt sie trotzdem, oder sie ist die einzige verkehrte Karte im Spiel.",
+    herkunft:"Klassisches Plot", req:"Kartenspiel", auch:"Thought of Card" },
+  { id:"zeichnung", name:"Zeichnungs-Duplikation", kat:"mental", rahmen:["nah","salon","buehne"], dauer:3,
+    text:"Ein Zuschauer zeichnet geheim ein beliebiges Bild. Der Magier konzentriert sich – und zeichnet auf seinem eigenen Block fast genau dasselbe.",
+    herkunft:"Klassiker der Mentalmagie", req:"Blöcke, Stifte", auch:"Drawing Duplication" },
+  { id:"mentalepic", name:"Mental Epic", kat:"mental", rahmen:["salon","buehne"], dauer:5,
+    text:"Eine Tafel mit drei abgedeckten Feldern. Drei Zuschauer wählen frei: eine Stadt, eine Zahl, eine Karte. Dann werden die Abdeckungen entfernt – unter jeder steht schon die richtige Antwort.",
+    herkunft:"Hen Fetsch", req:"Mental-Epic-Tafel", kauf:true },
+  { id:"muskellesen", name:"Verstecktes finden", kat:"mental", rahmen:["salon","buehne"], dauer:4,
+    text:"Während der Magier draußen wartet, verstecken die Zuschauer einen Gegenstand im Raum. Der Magier kommt zurück, hält einen Zuschauer leicht am Handgelenk – und findet das Versteck zielsicher.",
+    herkunft:"Klassiker; berühmt durch die ‚Gedankenleser‘ des 19. Jahrhunderts", req:"Ein Gegenstand", auch:"Muskellesen, Hellstrom-Effekt" },
+  { id:"gedaechtnis", name:"Gedächtniskunst", kat:"mental", rahmen:["nah","salon","buehne"], dauer:4,
+    text:"Das Publikum ruft Dutzende Begriffe oder Zahlen in den Raum. Der Magier wiederholt sie danach fehlerfrei vorwärts, rückwärts und in beliebiger Reihenfolge.",
+    herkunft:"Gedächtnis-Vorführung", req:"Tafel oder Liste (optional)", auch:"Memory Demonstration" },
+  { id:"uhrzeit", name:"Gedachte Uhrzeit", kat:"mental", rahmen:["nah","salon"], dauer:2,
+    text:"Ein Zuschauer stellt geheim eine Uhr auf eine beliebige Zeit. Der Magier hat genau diese Uhrzeit vorhergesagt – oder seine eigene Uhr zeigt plötzlich dieselbe Zeit.",
+    herkunft:"Klassisches Plot", req:"Uhr", auch:"Clock Prediction" },
+
+  // ───────────── Alltagsgegenstände ─────────────
+  { id:"stiftschein", name:"Stift durch Geldschein", kat:"alltag", rahmen:["nah"], dauer:2,
+    text:"Ein geliehener Geldschein wird gefaltet, ein Stift wird mitten hindurch gestoßen. Der Stift wird wieder herausgezogen – kein Loch, kein Riss.",
+    herkunft:"Klassiker, viele Fassungen", req:"Geldschein, Stift", auch:"Pen Through Bill" },
+  { id:"ringflight", name:"Ring Flight", kat:"alltag", rahmen:["nah","salon"], dauer:3, kauf:true,
+    text:"Ein geliehener Ring verschwindet aus der Hand des Magiers. Der Zuschauer findet ihn wieder – aufgefädelt am Schlüsselbund des Magiers, der die ganze Zeit sichtbar war.",
+    herkunft:"Kommerzieller Klassiker", req:"Spezieller Schlüsselbund", auch:"Ring auf den Schlüsselbund" },
+  { id:"salz", name:"Verschwindendes Salz", kat:"alltag", rahmen:["nah"], dauer:2,
+    text:"Der Magier schüttet Salz in seine Faust, eine ganze Menge. Er öffnet die Hand – sie ist leer. Später rieselt das Salz aus der Fingerspitze wieder heraus.",
+    herkunft:"Klassiker", req:"Salzstreuer", auch:"Salt Pour" },
+  { id:"gummiband", name:"Gummiband-Durchdringung", kat:"alltag", rahmen:["nah"], dauer:2,
+    text:"Zwei Gummibänder sind über Daumen und Zeigefinger gespannt und ineinander verhakt. Plötzlich gehen sie wie Geister durcheinander hindurch – und haken wieder ein.",
+    herkunft:"Klassiker", req:"Gummibänder", auch:"Crazy Man's Handcuffs" },
+  { id:"springgummi", name:"Springendes Gummiband", kat:"alltag", rahmen:["nah"], dauer:1,
+    text:"Ein Gummiband liegt um Zeige- und Mittelfinger. Der Magier schließt die Faust, öffnet sie – und das Band ist auf Ring- und kleinen Finger gesprungen.",
+    herkunft:"Klassiker", req:"Gummiband", auch:"Jumping Rubber Band" },
+  { id:"bueroklammern", name:"Sich verkettende Büroklammern", kat:"alltag", rahmen:["nah"], dauer:1,
+    text:"Zwei Büroklammern werden an einen gefalteten Geldschein gesteckt. Mit einem Ruck wird der Schein auseinandergezogen – die Klammern fliegen hoch und hängen ineinander verkettet.",
+    herkunft:"Klassiker", req:"Geldschein, Büroklammern", auch:"Linking Paper Clips" },
+  { id:"zeitung", name:"Zerrissene Zeitung", kat:"alltag", rahmen:["salon","buehne"], dauer:3,
+    text:"Eine Zeitungsseite wird mehrfach zerrissen, bis nur noch ein Häufchen Fetzen übrig ist. Der Magier faltet sie auseinander – die Seite ist wieder ganz.",
+    herkunft:"Klassiker", req:"Zeitung", auch:"Torn and Restored Newspaper" },
+  { id:"tisch", name:"Schwebender Tisch", kat:"alltag", rahmen:["salon","buehne"], dauer:4,
+    text:"Ein kleiner Tisch unter einem Tuch beginnt sich zu bewegen, hebt ab und schwebt durch den Raum. Der Magier hält nur die Tuchecken – zum Schluss steht der Tisch wieder ruhig auf dem Boden.",
+    herkunft:"Kommerzieller Klassiker", req:"Spezieller Tisch", auch:"Floating Table", kauf:true },
+  { id:"hotrod", name:"Hot Rod", kat:"alltag", rahmen:["nah","salon"], dauer:2, kauf:true,
+    text:"Ein Stab mit sechs bunten Steinen. Der Zuschauer wählt eine Farbe – doch die gewählte Farbe ist plötzlich auf allen Steinen. Am Ende zeigt der Stab wieder alle Farben.",
+    herkunft:"Kommerzieller Klassiker", req:"Hot-Rod-Stab", auch:"Jewel Stick" },
+  { id:"taschendieb", name:"Taschendiebstahl-Nummer", kat:"alltag", rahmen:["salon","buehne"], dauer:6,
+    text:"Ein Zuschauer kommt auf die Bühne. Während des Gesprächs verschwinden nach und nach Uhr, Portemonnaie, Krawatte oder Gürtel – und tauchen beim Magier wieder auf.",
+    herkunft:"Klassische Bühnennummer", req:"Ein freiwilliger Zuschauer", auch:"Pickpocket Act",
+    hinweis:"Alles am Schluss vollständig zurückgeben und vorher klären, was tabu ist." },
+
+  // ───────────── Feuer & Erscheinungen ─────────────
+  { id:"firewallet", name:"Fire Wallet", kat:"feuer", rahmen:["nah","salon"], dauer:1, kauf:true,
+    text:"Der Magier öffnet sein Portemonnaie – und Flammen schlagen heraus. Er schließt es, öffnet es wieder, und darin liegt die Zuschauerkarte oder ein Geldschein.",
+    herkunft:"Kommerzieller Klassiker, viele Hersteller", req:"Feuerbörse, Brennflüssigkeit", auch:"Feuerportemonnaie, Flammenbörse",
+    hinweis:"Feuer nur gemäß Anleitung, nie in Gesichtsnähe, Abstand zu Haaren, Kleidung und Deko halten; Löschmittel bereithalten." },
+  { id:"blitzpapier", name:"Blitzpapier", kat:"feuer", rahmen:["nah","salon","buehne"], dauer:1, kauf:true,
+    text:"Ein Zettel, eine Notiz oder ein ‚Zauberspruch‘ verpufft in einem hellen Flammenblitz – ohne Asche. Ideal, um etwas verschwinden oder erscheinen zu lassen.",
+    herkunft:"Verbrauchsmaterial für Zauberkünstler", req:"Blitzpapier, Feuerzeug", auch:"Flash Paper",
+    hinweis:"Sehr schnell brennend – nur kleine Stücke, trocken und kühl lagern." },
+  { id:"feuerball", name:"Feuerball aus der Hand", kat:"feuer", rahmen:["salon","buehne"], dauer:1, kauf:true,
+    text:"Mit einer Handbewegung oder aus einem Stift schießt der Magier einen kurzen Feuerball in die Luft.",
+    herkunft:"Kommerzielle Geräte, verschiedene Hersteller", req:"Feuer-Shooter", auch:"Fire Shooter",
+    hinweis:"Nur draußen oder mit genug Abstand nach oben und zum Publikum; Herstellerangaben beachten." },
+  { id:"stockerscheinen", name:"Erscheinender Stock", kat:"feuer", rahmen:["salon","buehne"], dauer:1, kauf:true,
+    text:"Aus einem Seidentuch oder aus der leeren Hand schießt plötzlich ein langer, schwarzer Zauberstock.",
+    herkunft:"Klassisches Bühnenrequisit", req:"Erscheinender Stock", auch:"Appearing Cane" },
+  { id:"stockverschwinden", name:"Verschwindender Stock", kat:"feuer", rahmen:["salon","buehne"], dauer:1, kauf:true,
+    text:"Der Magier wickelt einen Stock in Zeitungspapier oder ein Tuch – und knüllt alles zusammen. Der Stock ist verschwunden.",
+    herkunft:"Klassisches Bühnenrequisit", req:"Spezieller Stock", auch:"Vanishing Cane" },
+  { id:"pocketstaff", name:"Pocket Staff", kat:"feuer", rahmen:["salon","buehne"], dauer:1, kauf:true,
+    text:"Der Magier greift in seine Hosentasche und zieht einen Stab heraus, der viel länger ist, als die Tasche je fassen könnte – oft deutlich über einen Meter.",
+    herkunft:"Kommerzieller Effekt, verschiedene Hersteller", req:"Pocket Staff", auch:"Erscheinender Stab aus der Tasche" },
+  { id:"mouthcoil", name:"Mouth Coil", kat:"feuer", rahmen:["salon","buehne"], dauer:2, kauf:true,
+    text:"Der Magier zieht aus seinem Mund ein schier endloses Band aus buntem Papier – Meter um Meter, bis ein riesiger Haufen vor ihm liegt.",
+    herkunft:"Klassisches Bühnenrequisit", req:"Mouth Coils (Verbrauchsmaterial)", auch:"Papierschlange aus dem Mund" },
+  { id:"rauch", name:"Rauch aus den Fingern", kat:"feuer", rahmen:["nah","salon"], dauer:1, kauf:true,
+    text:"Der Magier reibt die Fingerspitzen aneinander – und feiner Rauch steigt auf, wie aus dem Nichts.",
+    herkunft:"Kommerzieller Effekt", req:"Spezielles Zubehör", auch:"Smoke" },
+  { id:"fackelblume", name:"Fackel zu Blumen", kat:"feuer", rahmen:["salon","buehne"], dauer:1, kauf:true,
+    text:"Eine brennende Fackel verwandelt sich in einem Moment in einen Strauß bunter Blumen.",
+    herkunft:"Klassisches Bühnenrequisit", req:"Fackel-Requisit", auch:"Torch to Flowers",
+    hinweis:"Feuer nur gemäß Anleitung und mit Abstand zum Publikum." },
+  { id:"schneesturm", name:"Schneesturm", kat:"feuer", rahmen:["salon","buehne"], dauer:3,
+    text:"Seidenpapier wird in kleine Stücke zerrissen und in ein Glas Wasser getaucht. Der Magier fächelt – und ein dichter Schneesturm aus weißen Flocken wirbelt über die Bühne.",
+    herkunft:"Klassische Bühnennummer", req:"Schneesturm-Set, Fächer", auch:"Snowstorm in China" },
+  { id:"taube", name:"Zauberpfanne", kat:"feuer", rahmen:["salon","buehne"], dauer:2, kauf:true,
+    text:"In einer leeren Pfanne wird etwas angezündet oder Teig angerührt. Deckel drauf, Deckel ab – darin sitzt eine Taube, ein Plüschhase oder ein Kuchen.",
+    herkunft:"Klassisches Bühnenrequisit", req:"Zauberpfanne", auch:"Dove Pan" },
+
+  // ───────────── Bühnenillusionen ─────────────
+  { id:"zersaegt", name:"Zersägte Jungfrau", kat:"buehne", rahmen:["buehne"], dauer:6,
+    text:"Eine Assistentin liegt in einer Kiste, Kopf und Füße schauen heraus. Der Magier sägt die Kiste in der Mitte durch und schiebt die Hälften auseinander. Danach werden sie wieder zusammengeschoben – und die Assistentin steigt unversehrt heraus.",
+    herkunft:"P. T. Selbit, 17. Januar 1921, Finsbury Park Empire in London", req:"Illusionskiste, Assistenz", auch:"Sawing a Woman in Half" },
+  { id:"zigzag", name:"Zig-Zag-Girl", kat:"buehne", rahmen:["buehne"], dauer:5,
+    text:"Eine Assistentin steht in einem schmalen, aufrechten Kasten. Zwei Klingen teilen ihn in drei Teile, und das Mittelstück wird zur Seite geschoben – während Gesicht, Hand und Fuß sichtbar bleiben und sich bewegen.",
+    herkunft:"Robert Harbin, 1960er-Jahre", req:"Illusion, Assistenz", auch:"Zickzack-Mädchen" },
+  { id:"metamorphose", name:"Metamorphose", kat:"buehne", rahmen:["buehne"], dauer:4,
+    text:"Der Magier wird gefesselt in einen Sack gesteckt und in einer verschlossenen Truhe eingeschlossen. Die Assistentin steht oben drauf und hebt einen Vorhang – in einer Sekunde steht der Magier oben, und die Assistentin liegt gefesselt in der Truhe.",
+    herkunft:"Berühmt durch Harry Houdini und seine Frau Bess in den 1890er-Jahren", req:"Truhe, Sack, Vorhang, Assistenz", auch:"Substitution Trunk" },
+  { id:"schweben", name:"Schwebende Jungfrau", kat:"buehne", rahmen:["buehne"], dauer:5,
+    text:"Eine Assistentin liegt auf einem Brett und erhebt sich langsam in die Luft. Der Magier führt einen Reifen um sie herum, um zu zeigen, dass nichts sie hält.",
+    herkunft:"Klassische Großillusion, bekannte Fassungen um 1900", req:"Illusion, Assistenz", auch:"Levitation, Asrah" },
+  { id:"wand", name:"Durch die Wand gehen", kat:"buehne", rahmen:["buehne"], dauer:5,
+    text:"Mitten auf der Bühne wird eine Ziegelmauer gebaut, das Publikum steht rundherum. Der Magier tritt auf der einen Seite hinter einen Wandschirm – und kommt auf der anderen Seite wieder heraus.",
+    herkunft:"P. T. Selbit (1913); kurz darauf auch Harry Houdini", req:"Großillusion", auch:"Walking Through a Wall" },
+  { id:"erscheinung", name:"Person erscheint aus leerem Kasten", kat:"buehne", rahmen:["buehne"], dauer:3,
+    text:"Ein Kasten wird von allen Seiten leer gezeigt und geschlossen. Einen Moment später springt eine Assistentin – oder der Magier selbst – heraus.",
+    herkunft:"Klassische Großillusion", req:"Illusion", auch:"Production Box" },
+  { id:"guillotine", name:"Finger-Guillotine", kat:"buehne", rahmen:["salon","buehne"], dauer:2, kauf:true,
+    text:"Ein Zuschauer steckt den Finger in eine kleine Guillotine, darüber eine Karotte. Die Klinge saust herunter, die Karotte ist durch – der Finger aber unverletzt.",
+    herkunft:"Kommerzieller Comedy-Klassiker", req:"Finger-Guillotine, Karotten", auch:"Finger Chopper" },
+
+  // ───────────── Entfesselung ─────────────
+  { id:"handschellen", name:"Handschellen-Entfesselung", kat:"entfesselung", rahmen:["salon","buehne"], dauer:3,
+    text:"Zuschauer legen dem Magier Handschellen an und prüfen sie. Hinter einem Tuch oder sogar offen vor dem Publikum ist er in Sekunden frei.",
+    herkunft:"Berühmt gemacht durch Harry Houdini um 1900", req:"Handschellen", auch:"Handcuff Escape",
+    hinweis:"Nur mit eigenen, geprüften Handschellen arbeiten, von denen man sicher den Schlüssel hat." },
+  { id:"zwangsjacke", name:"Zwangsjacke", kat:"entfesselung", rahmen:["salon","buehne"], dauer:4,
+    text:"Der Magier wird von Zuschauern in eine Zwangsjacke geschnallt, die Arme fest verschnürt. Unter Zappeln und Ringen windet er sich vor aller Augen heraus.",
+    herkunft:"Berühmt durch Harry Houdini, der sich sogar kopfüber hängend befreite", req:"Zwangsjacke, Helfer", auch:"Straitjacket Escape",
+    hinweis:"Nie kopfüber oder allein üben – immer mit einer Person, die sofort helfen kann." },
+  { id:"seilfessel", name:"Seil-Entfesselung", kat:"entfesselung", rahmen:["salon","buehne"], dauer:4,
+    text:"Zuschauer fesseln den Magier mit langen Seilen an einen Stuhl, so fest sie wollen. Hinter einem Vorhang ist er nach kurzer Zeit frei – manchmal schaut zwischendurch eine Hand heraus, die Glocken läutet.",
+    herkunft:"Klassiker; berühmt durch das ‚Geisterkabinett‘ der Davenport-Brüder (1850er-Jahre)", req:"Seile, Stuhl, Vorhang", auch:"Rope Escape" },
+  { id:"daumen", name:"Gefesselte Daumen", kat:"entfesselung", rahmen:["nah","salon"], dauer:3,
+    text:"Die Daumen des Magiers werden mit einem Draht oder einer Schnur fest zusammengebunden. Trotzdem fängt er geworfene Ringe auf den Armen auf und durchdringt Stuhllehnen.",
+    herkunft:"Klassiker aus Japan", req:"Schnur oder Draht, Ringe", auch:"Thumb Tie" },
+  { id:"sack", name:"Postsack-Entfesselung", kat:"entfesselung", rahmen:["buehne"], dauer:4,
+    text:"Der Magier steigt in einen schweren Postsack, der zugeschnürt und mit einem Schloss versiegelt wird. Kurz darauf ist er frei – Sack und Siegel sind unversehrt.",
+    herkunft:"Klassiker der Entfesselungskunst", req:"Sack, Schloss" },
+  { id:"ketten", name:"Ketten-Entfesselung", kat:"entfesselung", rahmen:["salon","buehne"], dauer:4,
+    text:"Schwere Ketten werden um Arme und Körper gelegt und mit mehreren Vorhängeschlössern gesichert. Der Magier windet sich frei, die Schlösser bleiben verschlossen.",
+    herkunft:"Klassiker der Entfesselungskunst", req:"Ketten, Schlösser",
+    hinweis:"Nur mit eigenen Schlössern und Ersatzschlüsseln in Reichweite eines Helfers." },
+  { id:"wasserzelle", name:"Wasserfolterzelle", kat:"entfesselung", rahmen:["buehne"], dauer:6,
+    text:"Der Magier wird kopfüber, die Füße in einem Holzrahmen eingeschlossen, in einen Glastank voller Wasser gesenkt. Ein Vorhang fällt – und nach bangen Minuten tritt er triefend, aber frei hervor.",
+    herkunft:"Harry Houdini, ab 1912", req:"Nur für Profis", auch:"Chinese Water Torture Cell",
+    hinweis:"Hier nur als Geschichte – Wasser-Entfesselungen sind lebensgefährlich und gehören ausschließlich in die Hände von Profis mit Sicherheitsteam." },
+  { id:"milchkanne", name:"Milchkannen-Entfesselung", kat:"entfesselung", rahmen:["buehne"], dauer:5,
+    text:"Eine übergroße Milchkanne wird mit Wasser gefüllt. Der Magier steigt hinein, der Deckel wird mit Vorhängeschlössern gesichert. Ein Wandschirm verdeckt die Kanne – Minuten später steht er draußen, die Schlösser zu.",
+    herkunft:"Harry Houdini, ab 1908", req:"Nur für Profis", auch:"Milk Can Escape",
+    hinweis:"Hier nur als Geschichte – nicht nachmachen." },
+
+  // ───────────── Kinder & Comedy ─────────────
+  { id:"hase", name:"Kaninchen aus dem Hut", kat:"kinder", rahmen:["salon","buehne"], dauer:2,
+    text:"Der Zylinder wird leer gezeigt. Der Magier zaubert – und zieht an den Ohren ein Kaninchen heraus. Heute oft mit einem Plüschhasen gespielt.",
+    herkunft:"Das Sinnbild der Zauberkunst schlechthin", req:"Hut, Hase (oder Plüschhase)" },
+  { id:"wackelstab", name:"Der kaputte Zauberstab", kat:"kinder", rahmen:["salon","buehne"], dauer:1, kauf:true,
+    text:"Der Magier reicht einem Kind seinen Zauberstab – und der klappt sofort zusammen, wird schlaff oder fällt auseinander. Beim Magier funktioniert er wieder tadellos.",
+    herkunft:"Comedy-Klassiker", req:"Spezieller Zauberstab", auch:"Breakaway Wand" },
+  { id:"malbuch", name:"Zaubermalbuch", kat:"kinder", rahmen:["salon","buehne"], dauer:2,
+    text:"Das Malbuch wird durchgeblättert: nur leere Seiten. Die Kinder zaubern mit – plötzlich sind Umrisse darin. Noch einmal gezaubert, und alle Bilder sind bunt ausgemalt.",
+    herkunft:"Kinder-Klassiker", req:"Zaubermalbuch", auch:"Coloring Book", kauf:true },
+  { id:"hippity", name:"Hüpfende Hasen", kat:"kinder", rahmen:["salon","buehne"], dauer:4,
+    text:"Ein weißes und ein schwarzes Papp-Kaninchen tauschen unter Röhren den Platz. Die Kinder schreien ‚Dreh ihn um!‘ – bis der Magier am Ende zeigt, dass die Hasen ganz andere Farben haben.",
+    herkunft:"Kinder-Klassiker (Sucker-Trick)", req:"Set", auch:"Hippity Hop Rabbits", kauf:true },
+  { id:"wuerfelbox", name:"Die Würfel-Box", kat:"kinder", rahmen:["salon","buehne"], dauer:4,
+    text:"Ein großer Würfel verschwindet aus einer Box mit zwei Türen. Die Kinder glauben, er rutscht nur hin und her – bis der Magier alle Türen öffnet und der Würfel tatsächlich weg ist, und dann im Hut wieder auftaucht.",
+    herkunft:"Kinder-Klassiker (Sucker-Trick)", req:"Würfel-Box", auch:"Sucker Die Box", kauf:true },
+  { id:"ballon", name:"Ballonmodellieren", kat:"kinder", rahmen:["nah","salon"], dauer:3,
+    text:"Aus langen Ballons entstehen in Sekunden Hunde, Schwerter, Blumen oder Kronen – als Geschenk für die Kinder.",
+    herkunft:"Unterhaltungskunst", req:"Modellierballons, Pumpe" },
+  { id:"nadelballon", name:"Nadel durch Ballon", kat:"kinder", rahmen:["nah","salon","buehne"], dauer:2, kauf:true,
+    text:"Eine lange Nadel wird quer durch einen aufgeblasenen Ballon gestoßen – er platzt nicht. Erst beim Herausziehen knallt es, oder gar nicht.",
+    herkunft:"Kommerzieller Klassiker", req:"Set", auch:"Needle Through Balloon" }
+];
+
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ───────────── Grundlagen ───────────── */
+  const $ = (s) => document.querySelector(s);
+  const KEY = 'zauberbuch-v1';
+  const STATUS = { '': 'Noch nicht eingeordnet', lernen: 'Will ich lernen', ueben: 'Am Üben', showreif: 'Showreif' };
+  const eingebettet = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+  const reduziert = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function el(tag, props, ...kids) {
+    const e = document.createElement(tag);
+    if (props) for (const k of Object.keys(props)) {
+      const v = props[k];
+      if (v === false || v == null) continue;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (k in e && typeof v !== 'string') e[k] = v;
+      else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const kid of kids.flat()) {
+      if (kid == null || kid === false) continue;
+      e.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    }
+    return e;
+  }
+  function norm(s) {
+    return String(s || '').toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+  function norm2(s) {
+    return String(s || '').toLowerCase().replace(/ß/g, 'ss').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+  function neueId(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function zahl(v) { const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) && n >= 0 ? Math.round(n * 2) / 2 : null; }
+  function fmtMin(m) {
+    if (!m) return '– min';
+    return String(m).replace('.', ',') + ' min';
+  }
+  function fmtGesamt(m) {
+    m = Math.round(m * 2) / 2;
+    if (m < 60) return String(m).replace('.', ',') + ' min';
+    const h = Math.floor(m / 60), r = Math.round(m - h * 60);
+    return h + ' h ' + String(r).padStart(2, '0') + ' min';
+  }
+  function ersterSatz(t) {
+    const m = String(t || '').match(/^.*?[.!?](\s|$)/);
+    return (m ? m[0] : String(t || '')).trim();
+  }
+  let toastTimer;
+  function toast(text) {
+    const t = $('#toast');
+    t.textContent = text; t.classList.add('an');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('an'), 2600);
+  }
+  function kopiere(text, meldung) {
+    function alt() {
+      const ta = el('textarea', { style: 'position:fixed;left:-9999px;top:0', 'aria-hidden': 'true' });
+      ta.value = text; document.body.append(ta); ta.select();
+      let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      ta.remove(); toast(ok ? meldung : 'Kopieren hat nicht funktioniert');
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast(meldung), alt);
+      else alt();
+    } catch (e) { alt(); }
+  }
+
+  /* ───────────── Speicher ───────────── */
+  let speicherOk = true;
+  try { localStorage.setItem('__zb_test', '1'); localStorage.removeItem('__zb_test'); } catch (e) { speicherOk = false; }
+
+  function leer() { return { version: 1, effekte: {}, eigene: [], shows: [], aktiveShow: null, offen: [] }; }
+  function normalisiere(d) {
+    const s = leer();
+    if (!d || typeof d !== 'object') return s;
+    if (d.effekte && typeof d.effekte === 'object') {
+      for (const id of Object.keys(d.effekte)) {
+        const x = d.effekte[id]; if (!x || typeof x !== 'object') continue;
+        const y = {};
+        if (STATUS[x.status] && x.status) y.status = x.status;
+        if (typeof x.notiz === 'string' && x.notiz) y.notiz = x.notiz;
+        if (zahl(x.dauer) != null && x.dauer !== '') y.dauer = zahl(x.dauer);
+        if (typeof x.t === 'number') y.t = x.t;
+        if (Object.keys(y).some((k) => k !== 't')) s.effekte[id] = y;
+      }
+    }
+    if (Array.isArray(d.eigene)) {
+      s.eigene = d.eigene.filter((e) => e && typeof e.id === 'string' && typeof e.name === 'string').map((e) => ({
+        id: e.id, name: e.name.slice(0, 120), kat: KATEGORIEN[e.kat] ? e.kat : 'sonstiges',
+        rahmen: Array.isArray(e.rahmen) ? e.rahmen.filter((r) => RAHMEN[r]) : ['nah'],
+        dauer: zahl(e.dauer) || 0, text: String(e.text || ''), herkunft: String(e.herkunft || ''),
+        req: String(e.req || ''), kauf: !!e.kauf
+      }));
+    }
+    if (Array.isArray(d.shows)) {
+      s.shows = d.shows.filter((x) => x && typeof x.id === 'string').map((x) => ({
+        id: x.id, name: String(x.name || 'Show'), notiz: String(x.notiz || ''), termin: String(x.termin || ''),
+        items: Array.isArray(x.items) ? x.items.filter((i) => typeof i === 'string') : []
+      }));
+    }
+    if (typeof d.aktiveShow === 'string' && s.shows.some((x) => x.id === d.aktiveShow)) s.aktiveShow = d.aktiveShow;
+    if (Array.isArray(d.offen)) s.offen = d.offen.filter((i) => s.shows.some((x) => x.id === i));
+    return s;
+  }
+  function lade() {
+    if (!speicherOk) return leer();
+    try { const raw = localStorage.getItem(KEY); return raw ? normalisiere(JSON.parse(raw)) : leer(); }
+    catch (e) { return leer(); }
+  }
+  let store = lade();
+  let speicherTimer;
+  function speichere(sofort) {
+    clearTimeout(speicherTimer);
+    const tu = () => {
+      if (!speicherOk) return;
+      try { localStorage.setItem(KEY, JSON.stringify(store)); }
+      catch (e) { speicherOk = false; $('#speicher-warnung').hidden = false; }
+    };
+    if (sofort) tu(); else speicherTimer = setTimeout(tu, 250);
+  }
+  window.addEventListener('pagehide', () => speichere(true));
+  if (!speicherOk) $('#speicher-warnung').hidden = false;
+
+  /* ───────────── Effekte ───────────── */
+  let alle = [], nachId = {};
+  function baueIndex() {
+    alle = EFFEKTE.map((e, i) => Object.assign({}, e, { eigen: false, nr: i }))
+      .concat(store.eigene.map((e, i) => Object.assign({}, e, { eigen: true, nr: 10000 + i })));
+    nachId = {};
+    alle.forEach((e) => { nachId[e.id] = e; });
+  }
+  function info(id) { return store.effekte[id] || {}; }
+  function setInfo(id, patch) {
+    const cur = Object.assign({}, store.effekte[id] || {}, patch);
+    if (!cur.status) delete cur.status;
+    if (!cur.notiz) delete cur.notiz;
+    if (cur.dauer == null) delete cur.dauer;
+    cur.t = Date.now();
+    if (Object.keys(cur).some((k) => k !== 't')) store.effekte[id] = cur; else delete store.effekte[id];
+    speichere();
+  }
+  function dauerVon(id) {
+    const i = info(id); if (typeof i.dauer === 'number') return i.dauer;
+    const e = nachId[id]; return e ? (e.dauer || 0) : 0;
+  }
+  function suchtext(e) {
+    return [e.name, e.text, e.herkunft, e.auch, e.req, e.hinweis, KATEGORIEN[e.kat], (e.rahmen || []).map((r) => RAHMEN[r]).join(' '),
+      e.kauf ? 'gekauft kauf' : '', e.eigen ? 'eigener eigene' : '', info(e.id).notiz].join(' \n ');
+  }
+
+  /* ───────────── Zustand der Ansicht ───────────── */
+  const state = { kat: '', rahmen: '', meins: '', terms: [], sort: 'kat' };
+  const els = {};        // id -> Elemente der Zeile
+  let drag = null;       // laufendes Ziehen
+
+  /* ───────────── Zeile bauen ───────────── */
+  function baueZeile(e) {
+    const id = e.id;
+    const pad = el('span', { class: 'pad', 'aria-hidden': 'true' });
+    const art = el('span', { class: 'z-art' });
+    const name = el('span', { class: 'z-name', text: e.name });
+    const kurz = el('span', { class: 'z-kurz', text: ersterSatz(e.text) });
+    const kopf = el('button', { type: 'button', class: 'z-kopf', 'aria-expanded': 'false', 'aria-controls': 'd-' + id }, art, name, kurz);
+    const notizTag = el('span', { class: 'notiz-tag', title: 'Hat Notizen', 'aria-label': 'hat Notizen', text: '✎' });
+    const dauerTag = el('span', { class: 'dauer-tag' });
+    const plus = el('button', { type: 'button', class: 'icon-knopf z-plus', text: '+' });
+    const pfeil = el('span', { class: 'z-pfeil', 'aria-hidden': 'true' });
+    const zeile = el('div', { class: 'z-zeile', draggable: 'true' }, kopf, el('span', { class: 'z-rechts' }, notizTag, dauerTag, plus, pfeil));
+    const inhalt = el('div', { class: 'z-inhalt' });
+    const detail = el('div', { class: 'z-detail', id: 'd-' + id }, el('div', { class: 'z-detail-in' }, inhalt));
+    const li = el('li', { class: 'z', 'data-id': id }, pad, zeile, detail);
+
+    kopf.addEventListener('click', () => setOffen(id, !li.classList.contains('offen')));
+    pfeil.addEventListener('click', () => setOffen(id, !li.classList.contains('offen')));
+    plus.addEventListener('click', () => zurAktivenShow(id));
+    zeile.addEventListener('dragstart', (ev) => {
+      drag = { t: 'e', id };
+      try { ev.dataTransfer.setData('text/plain', e.name); ev.dataTransfer.effectAllowed = 'copyMove'; } catch (x) {}
+      li.classList.add('zieht-gerade'); document.body.classList.add('zieht');
+    });
+    zeile.addEventListener('dragend', () => { drag = null; li.classList.remove('zieht-gerade'); dragEnde(); });
+
+    els[id] = { li, pad, art, name, kurz, kopf, notizTag, dauerTag, plus, inhalt, e };
+    aktualisiereZeile(id);
+    return li;
+  }
+
+  function aktualisiereZeile(id) {
+    const r = els[id]; if (!r) return;
+    const e = nachId[id], i = info(id);
+    r.pad.className = 'pad' + (i.status ? ' st-' + i.status : '');
+    r.art.textContent = '';
+    r.art.append(KATEGORIEN[e.kat] || e.kat, ' · ', (e.rahmen || []).map((x) => RAHMEN[x]).join(', '));
+    if (e.kauf) r.art.append(el('span', { class: 'marker', text: ' · gekauft' }));
+    if (e.eigen) r.art.append(el('span', { class: 'marker', text: ' · eigener' }));
+    if (i.status) r.art.append(el('span', { class: 'marker', text: ' · ' + STATUS[i.status].toLowerCase() }));
+    r.name.textContent = e.name;
+    r.kurz.textContent = ersterSatz(e.text);
+    r.notizTag.hidden = !i.notiz;
+    const d = dauerVon(id);
+    r.dauerTag.textContent = d ? '≈ ' + fmtMin(d) : '';
+    r.dauerTag.classList.toggle('eigen', typeof i.dauer === 'number');
+    r.dauerTag.title = typeof i.dauer === 'number' ? 'Deine Zeit (Richtwert: ' + fmtMin(e.dauer) + ')' : 'Richtwert';
+    const show = aktiveShow();
+    const lbl = show ? 'Zu „' + show.name + '“ hinzufügen' : 'Neue Show anlegen und hinzufügen';
+    r.plus.title = lbl; r.plus.setAttribute('aria-label', e.name + ': ' + lbl);
+  }
+
+  function setOffen(id, offen) {
+    const r = els[id]; if (!r) return;
+    if (offen) fuelleDetail(id);
+    r.li.classList.toggle('offen', offen);
+    r.kopf.setAttribute('aria-expanded', offen ? 'true' : 'false');
+  }
+
+  function fuelleDetail(id) {
+    const r = els[id], e = nachId[id], i = info(id);
+    r.inhalt.textContent = '';
+    r.inhalt.append(el('p', { class: 'e-text', text: e.text || 'Noch keine Beschreibung.' }));
+
+    const dl = el('dl', { class: 'z-dl' });
+    const zeile = (k, v, cls) => { if (v) dl.append(el('dt', { class: cls, text: k }), el('dd', null, v)); };
+    zeile('Herkunft', e.herkunft);
+    zeile('Auch bekannt als', e.auch);
+    zeile('Rahmen', (e.rahmen || []).map((x) => RAHMEN[x]).join(', '));
+    zeile('Requisiten', e.req);
+    zeile('Richtdauer', e.dauer ? fmtMin(e.dauer) : '');
+    zeile('Hinweis', e.hinweis, 'hinweis');
+    r.inhalt.append(dl);
+
+    // Mein Bereich
+    const statusSel = el('select', { class: 'feld' }, Object.keys(STATUS).map((k) => el('option', { value: k, text: STATUS[k] })));
+    statusSel.value = i.status || '';
+    statusSel.addEventListener('change', () => { setInfo(id, { status: statusSel.value }); aktualisiereZeile(id); zahlen(); renderChips(); });
+
+    const dauerIn = el('input', { class: 'feld dauer-feld', type: 'number', min: '0', max: '240', step: '0.5', inputmode: 'decimal', placeholder: e.dauer ? String(e.dauer) : '–' });
+    if (typeof i.dauer === 'number') dauerIn.value = i.dauer;
+    dauerIn.addEventListener('input', () => {
+      const v = dauerIn.value.trim() === '' ? null : zahl(dauerIn.value);
+      setInfo(id, { dauer: v }); aktualisiereZeile(id); renderShows();
+    });
+
+    const notiz = el('textarea', { class: 'feld', rows: 4, placeholder: 'Ablauf, Patter, Requisiten, worauf achten, wo gelernt …' });
+    notiz.value = i.notiz || '';
+    notiz.addEventListener('input', () => { setInfo(id, { notiz: notiz.value }); aktualisiereZeile(id); });
+
+    const inShows = el('p', { class: 'in-shows' });
+    const drin = store.shows.filter((s) => s.items.includes(id));
+    if (drin.length) {
+      inShows.append('In ');
+      drin.forEach((s, k) => {
+        if (k) inShows.append(', ');
+        inShows.append(el('button', { type: 'button', text: s.name, onclick: () => zeigeShow(s.id) }));
+      });
+    } else inShows.append('Noch in keiner Show.');
+
+    const showSel = el('select', { class: 'feld' },
+      store.shows.map((s) => el('option', { value: s.id, text: s.name })),
+      el('option', { value: '__neu', text: '+ Neue Show …' }));
+    if (store.aktiveShow) showSel.value = store.aktiveShow;
+    const addBtn = el('button', { type: 'button', class: 'knopf klein', text: 'Hinzufügen' });
+    addBtn.addEventListener('click', () => {
+      let sid = showSel.value;
+      if (sid === '__neu') sid = neueShow().id;
+      zuShow(sid, id);
+    });
+
+    r.inhalt.append(el('div', { class: 'meins' },
+      el('p', { class: 'meins-titel', text: 'Mein Stand' }),
+      el('div', { class: 'reihe' },
+        el('label', { class: 'fl' }, el('span', { text: 'Status' }), statusSel),
+        el('label', { class: 'fl' }, el('span', { text: 'Meine Dauer (min)' }), dauerIn)),
+      el('label', { class: 'fl' }, el('span', { text: 'Notizen' }), notiz),
+      inShows,
+      el('div', { class: 'reihe' },
+        el('label', { class: 'fl' }, el('span', { text: 'Zu Show hinzufügen' }), showSel), addBtn)));
+
+    const akt = el('div', { class: 'aktionen' });
+    akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Kopieren', onclick: () => kopiere(effektText(id), 'Effekt kopiert') }));
+    if (e.eigen) akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Bearbeiten', onclick: () => oeffneEditor(id) }));
+    else akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Als eigenen Effekt kopieren', title: 'Eine bearbeitbare Kopie anlegen, z. B. um die Beschreibung anzupassen', onclick: () => kopiereAlsEigen(id) }));
+    r.inhalt.append(akt);
+  }
+
+  function effektText(id) {
+    const e = nachId[id], i = info(id);
+    let s = e.name + '\n' + (KATEGORIEN[e.kat] || '') + ' · ' + fmtMin(dauerVon(id)) + '\n\n' + (e.text || '');
+    if (e.herkunft) s += '\n\nHerkunft: ' + e.herkunft;
+    if (e.req) s += '\nRequisiten: ' + e.req;
+    if (i.status) s += '\nStatus: ' + STATUS[i.status];
+    if (i.notiz) s += '\n\nNotizen:\n' + i.notiz;
+    return s;
+  }
+
+  /* ───────────── Liste, Filter, Sortierung ───────────── */
+  const liste = $('#liste');
+  function baueListe() {
+    liste.textContent = '';
+    for (const k of Object.keys(els)) delete els[k];
+    const frag = document.createDocumentFragment();
+    alle.forEach((e) => frag.append(baueZeile(e)));
+    liste.append(frag);
+  }
+
+  function passtMeins(e, m) {
+    const i = info(e.id);
+    if (!m) return true;
+    if (m === 'showreif' || m === 'ueben' || m === 'lernen') return i.status === m;
+    if (m === 'notizen') return !!i.notiz;
+    if (m === 'eigene') return e.eigen;
+    if (m === 'gekauft') return !!e.kauf;
+    if (m === 'ohneshow') return !store.shows.some((s) => s.items.includes(e.id));
+    return true;
+  }
+  function passt(e, ohne) {
+    if (ohne !== 'kat' && state.kat && e.kat !== state.kat) return false;
+    if (ohne !== 'rahmen' && state.rahmen && !(e.rahmen || []).includes(state.rahmen)) return false;
+    if (ohne !== 'meins' && !passtMeins(e, state.meins)) return false;
+    if (state.terms.length) {
+      const s1 = norm(suchtext(e)), s2 = norm2(suchtext(e));
+      for (const t of state.terms) if (s1.indexOf(t.a) < 0 && s2.indexOf(t.b) < 0) return false;
+    }
+    return true;
+  }
+  const katReihe = Object.keys(KATEGORIEN);
+  function ordnung(list) {
+    const a = list.slice();
+    const nm = (x, y) => x.name.localeCompare(y.name, 'de');
+    if (state.sort === 'name') a.sort(nm);
+    else if (state.sort === 'kurz') a.sort((x, y) => (dauerVon(x.id) || 999) - (dauerVon(y.id) || 999) || nm(x, y));
+    else if (state.sort === 'lang') a.sort((x, y) => dauerVon(y.id) - dauerVon(x.id) || nm(x, y));
+    else if (state.sort === 'neu') a.sort((x, y) => (info(y.id).t || 0) - (info(x.id).t || 0) || nm(x, y));
+    else a.sort((x, y) => katReihe.indexOf(x.kat) - katReihe.indexOf(y.kat) || x.nr - y.nr);
+    return a;
+  }
+  function apply() {
+    const sichtbar = ordnung(alle.filter((e) => passt(e)));
+    const frag = document.createDocumentFragment();
+    const set = new Set(sichtbar.map((e) => e.id));
+    sichtbar.forEach((e) => { els[e.id].li.hidden = false; frag.append(els[e.id].li); });
+    alle.forEach((e) => { if (!set.has(e.id)) { els[e.id].li.hidden = true; frag.append(els[e.id].li); } });
+    liste.append(frag);
+    $('#zaehler').textContent = sichtbar.length + ' von ' + alle.length + ' Effekten';
+    $('#leer').hidden = sichtbar.length > 0;
+    renderChips();
+  }
+
+  function renderChips() {
+    function chips(boxId, gruppe, eintraege) {
+      const box = $(boxId); box.textContent = '';
+      eintraege.forEach(([wert, label]) => {
+        const n = alle.filter((e) => passt(e, gruppe) && (wert === '' ? true :
+          gruppe === 'kat' ? e.kat === wert : gruppe === 'rahmen' ? (e.rahmen || []).includes(wert) : passtMeins(e, wert))).length;
+        if (wert && !n && state[gruppe] !== wert) return;
+        const b = el('button', { type: 'button', class: 'chip', 'aria-pressed': state[gruppe] === wert ? 'true' : 'false' }, label, el('span', { class: 'n', text: String(n) }));
+        b.addEventListener('click', () => { state[gruppe] = state[gruppe] === wert ? '' : wert; apply(); });
+        box.append(b);
+      });
+    }
+    chips('#chips-kat', 'kat', [['', 'Alle']].concat(katReihe.map((k) => [k, KATEGORIEN[k]])));
+    chips('#chips-rahmen', 'rahmen', [['', 'Alle']].concat(Object.keys(RAHMEN).map((k) => [k, RAHMEN[k]])));
+    chips('#chips-meins', 'meins', [['', 'Alle'], ['showreif', 'Showreif'], ['ueben', 'Am Üben'], ['lernen', 'Will ich lernen'],
+      ['notizen', 'Mit Notizen'], ['eigene', 'Eigene'], ['gekauft', 'Gekauft'], ['ohneshow', 'In keiner Show']]);
+  }
+
+  function zuruecksetzen() {
+    state.kat = ''; state.rahmen = ''; state.meins = ''; state.terms = []; $('#suche').value = ''; apply();
+  }
+
+  function zeigeEffekt(id) {
+    const r = els[id]; if (!r) return;
+    setAnsicht('bib');
+    if (r.li.hidden) zuruecksetzen();
+    setOffen(id, true);
+    r.li.classList.add('ziel');
+    setTimeout(() => r.li.classList.remove('ziel'), 2000);
+    requestAnimationFrame(() => {
+      r.li.scrollIntoView({ block: 'start', behavior: reduziert ? 'auto' : 'smooth' });
+      try { r.kopf.focus({ preventScroll: true }); } catch (x) {}
+    });
+  }
+
+  function zahlen() {
+    const z = { showreif: 0, ueben: 0, lernen: 0 };
+    Object.values(store.effekte).forEach((i) => { if (z[i.status] != null) z[i.status]++; });
+    const ul = $('#zahlen'); ul.textContent = '';
+    [[alle.length, 'Effekte'], [z.showreif, 'showreif'], [z.ueben, 'am Üben'], [z.lernen, 'will ich lernen'], [store.shows.length, store.shows.length === 1 ? 'Show' : 'Shows']]
+      .forEach(([n, t]) => ul.append(el('li', null, el('b', { text: String(n) }), ' ' + t)));
+    $('#tab-shows').textContent = 'Shows (' + store.shows.length + ')';
+  }
+
+  /* ───────────── Shows ───────────── */
+  function aktiveShow() { return store.shows.find((s) => s.id === store.aktiveShow) || null; }
+  function showDauer(s) { return s.items.reduce((a, id) => a + (nachId[id] ? dauerVon(id) : 0), 0); }
+  function neueShow(name) {
+    const s = { id: neueId('s'), name: name || 'Show ' + (store.shows.length + 1), notiz: '', termin: '', items: [] };
+    store.shows.push(s);
+    store.aktiveShow = s.id;
+    if (!store.offen.includes(s.id)) store.offen.push(s.id);
+    speichere(); return s;
+  }
+  function zuShow(sid, effId, idx) {
+    const s = store.shows.find((x) => x.id === sid); if (!s) return false;
+    if (s.items.includes(effId)) { toast('„' + nachId[effId].name + '“ ist schon in „' + s.name + '“'); return false; }
+    if (idx == null || idx > s.items.length) idx = s.items.length;
+    s.items.splice(idx, 0, effId);
+    store.aktiveShow = sid;
+    speichere(); nachShowAenderung();
+    toast('„' + nachId[effId].name + '“ → ' + s.name + ' (' + s.items.length + ' · ' + fmtGesamt(showDauer(s)) + ')');
+    return true;
+  }
+  function zurAktivenShow(effId) {
+    let s = aktiveShow();
+    if (!s) s = neueShow('Meine Show');
+    zuShow(s.id, effId);
+  }
+  function nachShowAenderung() {
+    renderShows(); zahlen();
+    alle.forEach((e) => aktualisiereZeile(e.id));
+    document.querySelectorAll('.z.offen').forEach((li) => fuelleDetailBehalten(li.dataset.id));
+    if (state.meins === 'ohneshow') apply(); else renderChips();
+  }
+  /* Detail neu füllen, ohne die Notiz zu stören, die gerade getippt wird */
+  function fuelleDetailBehalten(id) {
+    const r = els[id]; if (!r) return;
+    if (r.inhalt.contains(document.activeElement) && document.activeElement.tagName === 'TEXTAREA') return;
+    fuelleDetail(id);
+  }
+
+  let umbenennen = null, loeschFrage = null;
+  const showListe = $('#showliste');
+
+  function renderShows() {
+    showListe.textContent = '';
+    if (!store.shows.length) {
+      showListe.append(el('div', { class: 'drop-hinweis', text: 'Noch keine Show. Leg mit „+ Neue Show“ einen Ordner an – zum Beispiel für einen Geburtstag, einen Auftritt oder dein Close-up-Set.' }));
+      return;
+    }
+    store.shows.forEach((s) => showListe.append(baueShow(s)));
+  }
+
+  function baueShow(s) {
+    const offen = store.offen.includes(s.id);
+    const aktiv = store.aktiveShow === s.id;
+    const card = el('div', { class: 'show' + (offen ? ' offen' : '') + (aktiv ? ' aktiv' : ''), 'data-id': s.id });
+
+    const meta = s.items.length + (s.items.length === 1 ? ' Effekt' : ' Effekte') + ' · ';
+    const titel = el('button', { type: 'button', class: 'show-titel', 'aria-expanded': offen ? 'true' : 'false' },
+      el('span', { class: 'ordner', 'aria-hidden': 'true' }),
+      el('span', { style: 'min-width:0' },
+        el('span', { class: 'show-name' }, s.name, aktiv ? el('span', { class: 'aktiv-tag', text: 'markiert' }) : null),
+        el('span', { class: 'show-meta' }, meta, el('b', { text: fmtGesamt(showDauer(s)) }), s.termin ? ' · ' + s.termin : '')));
+    titel.addEventListener('click', () => {
+      const i = store.offen.indexOf(s.id);
+      if (i >= 0 && aktiv) store.offen.splice(i, 1); else if (i < 0) store.offen.push(s.id);
+      store.aktiveShow = s.id; speichere(); renderShows(); alle.forEach((e) => aktualisiereZeile(e.id));
+    });
+    card.append(el('div', { class: 'show-kopf' }, titel));
+
+    // Ziehen & Ablegen
+    card.addEventListener('dragover', (ev) => {
+      if (!drag) return;
+      ev.preventDefault();
+      try { ev.dataTransfer.dropEffect = drag.t === 'e' ? 'copy' : 'move'; } catch (x) {}
+      card.classList.add('drop-ziel');
+      markiereEinfuege(card, ev.clientY);
+    });
+    card.addEventListener('dragleave', (ev) => {
+      if (!card.contains(ev.relatedTarget)) { card.classList.remove('drop-ziel'); markiereEinfuege(card, null); }
+    });
+    card.addEventListener('drop', (ev) => {
+      if (!drag) return;
+      ev.preventDefault();
+      const idx = einfuegeIndex(card, ev.clientY);
+      card.classList.remove('drop-ziel');
+      ablegen(s.id, idx);
+    });
+
+    if (!offen) return card;
+
+    const inhalt = el('div', { class: 'show-inhalt' });
+    const ol = el('ol', { class: 'programm' });
+    s.items.forEach((id, idx) => {
+      const e = nachId[id];
+      if (!e) return;
+      const li = el('li', { class: 'p-item', draggable: 'true', 'data-idx': String(idx) },
+        el('button', { type: 'button', class: 'p-name', text: e.name, title: 'Effekt in der Liste zeigen', onclick: () => zeigeEffekt(id) }),
+        el('span', { class: 'p-dauer', text: fmtMin(dauerVon(id)) }),
+        el('button', { type: 'button', class: 'icon-knopf', text: '↑', 'aria-label': e.name + ' nach oben', disabled: idx === 0, onclick: () => verschiebe(s, idx, idx - 1) }),
+        el('button', { type: 'button', class: 'icon-knopf', text: '↓', 'aria-label': e.name + ' nach unten', disabled: idx === s.items.length - 1, onclick: () => verschiebe(s, idx, idx + 1) }),
+        el('button', { type: 'button', class: 'icon-knopf', text: '✕', 'aria-label': e.name + ' aus der Show entfernen', onclick: () => { s.items.splice(idx, 1); speichere(); nachShowAenderung(); } }));
+      li.addEventListener('dragstart', (ev) => {
+        drag = { t: 's', show: s.id, idx };
+        try { ev.dataTransfer.setData('text/plain', e.name); ev.dataTransfer.effectAllowed = 'move'; } catch (x) {}
+        document.body.classList.add('zieht');
+        ev.stopPropagation();
+      });
+      li.addEventListener('dragend', () => { drag = null; dragEnde(); });
+      ol.append(li);
+    });
+    inhalt.append(ol);
+    inhalt.append(el('div', { class: 'drop-hinweis', text: s.items.length ? 'Weitere Effekte hierher ziehen' : 'Effekte aus der Liste hierher ziehen – oder mit „+“ hinzufügen' }));
+
+    // Felder
+    const felder = el('div', { class: 'show-felder' });
+    if (umbenennen === s.id) {
+      const inp = el('input', { class: 'feld', value: s.name, maxlength: '80', 'aria-label': 'Name der Show' });
+      const fertig = () => { const v = inp.value.trim(); if (v) s.name = v; umbenennen = null; speichere(); nachShowAenderung(); };
+      inp.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); fertig(); } if (ev.key === 'Escape') { umbenennen = null; renderShows(); } });
+      inp.addEventListener('blur', fertig);
+      felder.append(el('label', { class: 'fl' }, el('span', { text: 'Name' }), inp));
+      setTimeout(() => { inp.focus(); inp.select(); }, 0);
+    }
+    const termin = el('input', { class: 'feld', value: s.termin, maxlength: '80', placeholder: 'z. B. Sa 12. Dez., Geburtstag Lena' });
+    termin.addEventListener('change', () => { s.termin = termin.value.trim(); speichere(); renderShows(); });
+    const notiz = el('textarea', { class: 'feld', rows: 3, placeholder: 'Ablauf, Musik, Übergänge, was einpacken …' });
+    notiz.value = s.notiz;
+    notiz.addEventListener('input', () => { s.notiz = notiz.value; speichere(); });
+    felder.append(el('label', { class: 'fl' }, el('span', { text: 'Termin / Anlass' }), termin),
+      el('label', { class: 'fl' }, el('span', { text: 'Notizen zur Show' }), notiz));
+    inhalt.append(felder);
+
+    // Aktionen
+    const akt = el('div', { class: 'show-aktionen' });
+    akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Umbenennen', onclick: () => { umbenennen = s.id; renderShows(); } }));
+    akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Setlist kopieren', onclick: () => kopiere(setlistText(s), 'Setlist kopiert') }));
+    if (!eingebettet) akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Drucken', onclick: () => drucke(s) }));
+    akt.append(el('button', { type: 'button', class: 'knopf zweit klein', text: 'Duplizieren', onclick: () => {
+      const k = neueShow(s.name + ' (Kopie)'); k.items = s.items.slice(); k.notiz = s.notiz; k.termin = s.termin; speichere(); nachShowAenderung();
+    } }));
+    const del = el('button', { type: 'button', class: 'knopf gefahr klein' + (loeschFrage === s.id ? ' scharf' : ''), text: loeschFrage === s.id ? 'Wirklich löschen?' : 'Löschen' });
+    del.addEventListener('click', () => {
+      if (loeschFrage !== s.id) { loeschFrage = s.id; renderShows(); setTimeout(() => { if (loeschFrage === s.id) { loeschFrage = null; renderShows(); } }, 4000); return; }
+      loeschFrage = null;
+      store.shows = store.shows.filter((x) => x.id !== s.id);
+      store.offen = store.offen.filter((x) => x !== s.id);
+      if (store.aktiveShow === s.id) store.aktiveShow = store.shows.length ? store.shows[store.shows.length - 1].id : null;
+      speichere(); nachShowAenderung(); toast('Show „' + s.name + '“ gelöscht');
+    });
+    akt.append(del);
+    inhalt.append(akt);
+    card.append(inhalt);
+    return card;
+  }
+
+  function verschiebe(s, von, nach) {
+    if (nach < 0 || nach >= s.items.length) return;
+    const [x] = s.items.splice(von, 1); s.items.splice(nach, 0, x);
+    speichere(); renderShows();
+    const btns = showListe.querySelectorAll('.show[data-id="' + s.id + '"] .p-item')[nach];
+    if (btns) { const b = btns.querySelectorAll('.icon-knopf')[nach < von ? 0 : 1]; if (b && !b.disabled) b.focus(); }
+  }
+
+  function einfuegeIndex(card, y) {
+    const items = Array.from(card.querySelectorAll('.p-item'));
+    for (const it of items) { const r = it.getBoundingClientRect(); if (y < r.top + r.height / 2) return +it.dataset.idx; }
+    return null; // ans Ende
+  }
+  function markiereEinfuege(card, y) {
+    card.querySelectorAll('.p-item.vor').forEach((x) => x.classList.remove('vor'));
+    if (y == null) return;
+    const idx = einfuegeIndex(card, y);
+    if (idx != null) { const it = card.querySelector('.p-item[data-idx="' + idx + '"]'); if (it) it.classList.add('vor'); }
+  }
+  function ablegen(sid, idx) {
+    const ziel = store.shows.find((x) => x.id === sid); if (!ziel || !drag) return;
+    if (drag.t === 'e') {
+      if (!store.offen.includes(sid)) store.offen.push(sid);
+      zuShow(sid, drag.id, idx);
+    } else if (drag.t === 's') {
+      const quelle = store.shows.find((x) => x.id === drag.show); if (!quelle) return;
+      const id = quelle.items[drag.idx];
+      if (quelle === ziel) {
+        let n = idx == null ? ziel.items.length : idx;
+        if (drag.idx < n) n--;
+        quelle.items.splice(drag.idx, 1); ziel.items.splice(n, 0, id);
+      } else {
+        if (ziel.items.includes(id)) { toast('Schon in „' + ziel.name + '“'); return; }
+        quelle.items.splice(drag.idx, 1);
+        ziel.items.splice(idx == null ? ziel.items.length : idx, 0, id);
+        toast('„' + nachId[id].name + '“ nach „' + ziel.name + '“ verschoben');
+      }
+      speichere(); nachShowAenderung();
+    }
+    drag = null; dragEnde();
+  }
+  function dragEnde() {
+    document.body.classList.remove('zieht');
+    document.querySelectorAll('.drop-ziel').forEach((x) => x.classList.remove('drop-ziel'));
+    document.querySelectorAll('.p-item.vor').forEach((x) => x.classList.remove('vor'));
+  }
+
+  function zeigeShow(sid) {
+    if (!store.offen.includes(sid)) store.offen.push(sid);
+    store.aktiveShow = sid; speichere(); renderShows(); alle.forEach((e) => aktualisiereZeile(e.id));
+    setAnsicht('shows');
+    const c = showListe.querySelector('.show[data-id="' + sid + '"]');
+    if (c) c.scrollIntoView({ block: 'nearest', behavior: reduziert ? 'auto' : 'smooth' });
+  }
+
+  function setlistText(s) {
+    let t = s.name + (s.termin ? ' – ' + s.termin : '') + '\n' + s.items.length + ' Effekte · ' + fmtGesamt(showDauer(s)) + '\n\n';
+    s.items.forEach((id, i) => { if (nachId[id]) t += (i + 1) + '. ' + nachId[id].name + ' (' + fmtMin(dauerVon(id)) + ')\n'; });
+    if (s.notiz) t += '\nNotizen:\n' + s.notiz + '\n';
+    return t;
+  }
+  function drucke(s) {
+    const d = $('#druck'); d.textContent = '';
+    d.append(el('h1', { text: s.name }), el('p', { class: 'meta', text: [s.termin, s.items.length + ' Effekte', fmtGesamt(showDauer(s))].filter(Boolean).join(' · ') }));
+    const ol = el('ol');
+    s.items.forEach((id) => {
+      const e = nachId[id]; if (!e) return;
+      const i = info(id);
+      ol.append(el('li', null, el('b', { text: e.name }), ' – ' + fmtMin(dauerVon(id)), e.req ? el('div', { class: 'n', text: 'Requisiten: ' + e.req }) : null, i.notiz ? el('div', { class: 'n', text: i.notiz }) : null));
+    });
+    d.append(ol);
+    if (s.notiz) d.append(el('h2', { text: 'Notizen' }), el('p', { class: 'n', text: s.notiz }));
+    try { window.print(); } catch (e) { toast('Drucken ist hier nicht möglich'); }
+  }
+
+  /* ───────────── Eigene Effekte ───────────── */
+  const dlgE = $('#dlg-effekt'), formE = $('#form-effekt');
+  const F = (n) => formE.elements.namedItem(n);
+  let editId = null, loeschE = false;
+  $('#f-kat').append(...Object.keys(KATEGORIEN).map((k) => el('option', { value: k, text: KATEGORIEN[k] })));
+  $('#f-rahmen').append(...Object.keys(RAHMEN).map((k) => el('label', null, el('input', { type: 'checkbox', name: 'rahmen', value: k }), RAHMEN[k])));
+
+  function oeffneEditor(id, vorlage) {
+    editId = id || null; loeschE = false;
+    const e = id ? store.eigene.find((x) => x.id === id) : (vorlage || null);
+    $('#dlg-effekt-titel').textContent = id ? 'Effekt bearbeiten' : 'Neuer Effekt';
+    formE.reset();
+    F('name').value = e ? e.name : '';
+    F('kat').value = e ? e.kat : 'karten';
+    F('dauer').value = e && e.dauer ? e.dauer : '';
+    F('text').value = e ? e.text : '';
+    F('herkunft').value = e ? e.herkunft : '';
+    F('req').value = e ? e.req : '';
+    F('kauf').checked = !!(e && e.kauf);
+    const r = e ? e.rahmen : ['nah'];
+    formE.querySelectorAll('input[name="rahmen"]').forEach((c) => { c.checked = r.includes(c.value); });
+    const del = $('#f-loeschen'); del.hidden = !id; del.textContent = 'Effekt löschen'; del.classList.remove('scharf');
+    if (typeof dlgE.showModal === 'function') dlgE.showModal(); else dlgE.setAttribute('open', '');
+    setTimeout(() => F('name').focus(), 0);
+  }
+  function schliesse(d) { if (d.open) { if (typeof d.close === 'function') d.close(); else d.removeAttribute('open'); } }
+  document.querySelectorAll('[data-schliessen]').forEach((b) => b.addEventListener('click', () => schliesse(b.closest('dialog'))));
+
+  formE.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const name = F('name').value.trim();
+    if (!name) { F('name').focus(); return; }
+    const rahmen = Array.from(formE.querySelectorAll('input[name="rahmen"]:checked')).map((c) => c.value);
+    const neu = {
+      id: editId || neueId('eigen-'), name, kat: F('kat').value, rahmen: rahmen.length ? rahmen : ['nah'],
+      dauer: zahl(F('dauer').value) || 0, text: F('text').value.trim(), herkunft: F('herkunft').value.trim(),
+      req: F('req').value.trim(), kauf: F('kauf').checked
+    };
+    if (editId) { const i = store.eigene.findIndex((x) => x.id === editId); if (i >= 0) store.eigene[i] = neu; }
+    else store.eigene.push(neu);
+    speichere(true);
+    schliesse(dlgE);
+    neuAufbauen();
+    toast(editId ? 'Gespeichert' : '„' + name + '“ angelegt');
+    zeigeEffekt(neu.id);
+  });
+  $('#f-loeschen').addEventListener('click', () => {
+    const b = $('#f-loeschen');
+    if (!loeschE) { loeschE = true; b.textContent = 'Wirklich löschen?'; b.classList.add('scharf'); return; }
+    const id = editId;
+    store.eigene = store.eigene.filter((x) => x.id !== id);
+    delete store.effekte[id];
+    store.shows.forEach((s) => { s.items = s.items.filter((x) => x !== id); });
+    speichere(true); schliesse(dlgE); neuAufbauen(); toast('Effekt gelöscht');
+  });
+  function kopiereAlsEigen(id) {
+    const e = nachId[id];
+    oeffneEditor(null, { name: e.name + ' (eigene Fassung)', kat: e.kat, rahmen: e.rahmen.slice(), dauer: e.dauer, text: e.text, herkunft: e.herkunft, req: e.req, kauf: !!e.kauf });
+  }
+
+  /* ───────────── Backup ───────────── */
+  const dlgB = $('#dlg-backup');
+  let ladeFrage = false;
+  function backupText() { return JSON.stringify({ app: 'zauberbuch', version: 1, exportiert: new Date().toISOString(), daten: store }, null, 1); }
+  $('#backup-knopf').addEventListener('click', () => {
+    $('#bk-datei').hidden = eingebettet;
+    $('#bk-meldung').textContent = ''; $('#bk-text').value = ''; $('#bk-file').value = '';
+    ladeFrage = false; $('#bk-laden').textContent = 'Backup laden und ersetzen'; $('#bk-laden').classList.remove('scharf');
+    if (typeof dlgB.showModal === 'function') dlgB.showModal(); else dlgB.setAttribute('open', '');
+  });
+  $('#bk-datei').addEventListener('click', () => {
+    try {
+      const blob = new Blob([backupText()], { type: 'application/json' });
+      const a = el('a', { href: URL.createObjectURL(blob), download: 'zauberbuch-backup-' + new Date().toISOString().slice(0, 10) + '.json' });
+      document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      $('#bk-meldung').textContent = 'Backup-Datei wurde gespeichert.';
+    } catch (e) { $('#bk-meldung').textContent = 'Speichern als Datei geht hier nicht – nimm „In die Zwischenablage kopieren“.'; }
+  });
+  $('#bk-kopieren').addEventListener('click', () => kopiere(backupText(), 'Backup kopiert – füge es z. B. in eine Notiz oder Mail ein'));
+  $('#bk-file').addEventListener('change', () => {
+    const f = $('#bk-file').files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { $('#bk-text').value = String(r.result || ''); $('#bk-meldung').textContent = 'Datei gelesen. Jetzt „Backup laden und ersetzen“ drücken.'; };
+    r.readAsText(f);
+  });
+  $('#bk-laden').addEventListener('click', () => {
+    let d;
+    try { d = JSON.parse($('#bk-text').value); } catch (e) { $('#bk-meldung').textContent = 'Das sieht nicht nach einem gültigen Backup aus.'; return; }
+    const daten = d && d.app === 'zauberbuch' ? d.daten : (d && d.effekte ? d : null);
+    if (!daten) { $('#bk-meldung').textContent = 'Das ist kein Zauberbuch-Backup.'; return; }
+    if (!ladeFrage) { ladeFrage = true; $('#bk-laden').textContent = 'Wirklich alles ersetzen?'; $('#bk-laden').classList.add('scharf'); return; }
+    store = normalisiere(daten); speichere(true);
+    neuAufbauen(); schliesse(dlgB); toast('Backup geladen');
+  });
+
+  /* ───────────── Ansicht & Design ───────────── */
+  function setAnsicht(a) {
+    document.body.dataset.ansicht = a;
+    $('#tab-bib').setAttribute('aria-pressed', a === 'bib' ? 'true' : 'false');
+    $('#tab-shows').setAttribute('aria-pressed', a === 'shows' ? 'true' : 'false');
+  }
+  $('#tab-bib').addEventListener('click', () => setAnsicht('bib'));
+  $('#tab-shows').addEventListener('click', () => setAnsicht('shows'));
+
+  function setzeDesign(d, merken) {
+    document.documentElement.setAttribute('data-theme', d);
+    $('#design-knopf').textContent = d === 'hell' ? 'Dunkles Design' : 'Helles Design';
+    const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', d === 'hell' ? '#F4ECE6' : '#1E0C12');
+    if (merken) { try { localStorage.setItem('zauberbuch-design', d); } catch (e) {} }
+  }
+  $('#design-knopf').addEventListener('click', () => setzeDesign(document.documentElement.getAttribute('data-theme') === 'hell' ? 'dunkel' : 'hell', true));
+
+  /* ───────────── Start ───────────── */
+  function neuAufbauen() {
+    baueIndex();
+    // Verweise auf gelöschte Effekte aufräumen
+    store.shows.forEach((s) => { s.items = s.items.filter((id) => nachId[id]); });
+    baueListe(); apply(); renderShows(); zahlen();
+  }
+
+  $('#neu-effekt').addEventListener('click', () => oeffneEditor(null));
+  $('#neu-show').addEventListener('click', () => { const s = neueShow(); umbenennen = s.id; nachShowAenderung(); setAnsicht('shows'); });
+  $('#suche').addEventListener('input', (ev) => {
+    state.terms = ev.target.value.split(/\s+/).filter(Boolean).map((t) => ({ a: norm(t), b: norm2(t) }));
+    apply();
+  });
+  $('#suche').addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && ev.target.value) { ev.target.value = ''; state.terms = []; apply(); } });
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key !== '/' || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    const a = document.activeElement;
+    if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT' || a.isContentEditable)) return;
+    if (document.querySelector('dialog[open]')) return;
+    ev.preventDefault(); setAnsicht('bib'); $('#suche').focus();
+  });
+  $('#sortierung').addEventListener('change', (ev) => { state.sort = ev.target.value; apply(); });
+  $('#zuruecksetzen').addEventListener('click', zuruecksetzen);
+
+  setzeDesign(document.documentElement.getAttribute('data-theme') === 'hell' ? 'hell' : 'dunkel', false);
+  neuAufbauen();
+  window.__zauberbuch = { store: () => store, alle: () => alle };
+})();
+</script>
+</body>
+</html>
